@@ -28,11 +28,12 @@ public class PlayerJumpState : IState
         player.moveDirection += controller.Up * player.CalculateJumpSpeed(player.maxJumpHeight, -player.Gravity);
 
         player.Animator.SetBool("jump", true);
-        player.Animator.CrossFade("jump_launch", .2f);
+        player.Animator.CrossFade("jump_launch", 0.0f);
     }
 
     public void Update()
     {
+
         Vector3 planarMoveDirection = Math3D.ProjectVectorOnPlane(controller.Up, player.moveDirection);
         Vector3 verticalMoveDirection = player.moveDirection - planarMoveDirection;
 

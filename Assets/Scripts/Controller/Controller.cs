@@ -314,7 +314,7 @@ public class Controller : SphereCastController
                 if (contactPointSuccess)
                 {
                     if (debugPushbackMessages)
-                        DebugDraw.DrawMarker(contactPoint, 2.0f, Color.cyan, 0.0f, false);
+                        DebugDraw.DrawMarker(contactPoint, 1.0f, Color.cyan, 0.0f, false);
 
                     Vector3 v = contactPoint - position;
                     if (v != Vector3.zero)
@@ -511,7 +511,7 @@ public class Controller : SphereCastController
             float smallerRadius = controller.radius - (Tolerance * Tolerance);
 
             RaycastHit hit;
-
+            
             if (Physics.SphereCast(o, smallerRadius, down, out hit, Mathf.Infinity, walkable, triggerInteraction))
             {
                 var colType = hit.collider.gameObject.GetComponent<CollisionType>();

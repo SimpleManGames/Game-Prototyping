@@ -1,10 +1,16 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
+
 /// <summary>
 /// StateMachine
 /// IState acts as slots for the StateMachine
 /// </summary>
+[Serializable]
 public class StateMachine
 {
+    [Header("State Machine")]
+    public bool debugStateChanges = false;
+
     protected IState _currentState;
     /// <summary>
     /// Set this in order to change the state
@@ -23,7 +29,8 @@ public class StateMachine
             // Excute the Exit function of the state we are leaving
             _currentState?.Exit();
 
-            Debug.Log(_currentState?.GetType().ToString() + " => " + value?.GetType().ToString());
+            if (debugStateChanges)
+                Debug.Log(_currentState?.GetType().ToString() + " => " + value?.GetType().ToString());
 
             _currentState = value;
             // Excute the State function of the state we are entering

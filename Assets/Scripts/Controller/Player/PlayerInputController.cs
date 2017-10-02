@@ -36,6 +36,7 @@ public class PlayerInputController : MonoBehaviour
         {
             MoveInput = moveInput,
             MouseInput = mouseInput,
+            RightStickInput = rightStickInput,
             JumpInput = jumpInput,
             RunInput = runInput
         };
@@ -46,6 +47,7 @@ public struct PlayerInput
 {
     public Vector3 MoveInput;
     public Vector2 MouseInput;
+    public Vector2 RightStickInput;
     public bool JumpInput;
     public bool RunInput;
 }

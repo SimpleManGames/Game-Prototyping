@@ -45,10 +45,10 @@ public class CameraController : MonoBehaviour
 
     void Update()
     {
-        float inputX = Input.GetAxis("RightStick Horz");
-        float inputZ = Input.GetAxis("RightStick Vert");
+        float inputX = playerController.input.Current.RightStickInput.x;
+        float inputZ = playerController.input.Current.RightStickInput.y;
 
-        mouse = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
+        mouse = playerController.input.Current.MouseInput;
         finalInput = new Vector2(inputX + mouse[0], inputZ + mouse[1]);
 
         currentRotation[1] += finalInput.x * settings.sensitivity * Time.deltaTime;
