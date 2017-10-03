@@ -27,10 +27,11 @@ public class Agent : MonoBehaviour, IGravity
     public float airControlPercent;
 
     public StateMachine state;
-    
+
     public virtual void Awake()
     {
-        state = new StateMachine();
+        if (state == null)
+            state = new StateMachine();
     }
 
     public virtual void Start()

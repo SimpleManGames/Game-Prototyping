@@ -20,12 +20,15 @@ public class Player : Agent
     public Vector3 moveDirection;
     [SerializeField, ReadOnly]
     private float moveAmount;
+    public float MoveAmount { get; }
     [ReadOnly]
     public bool canMove;
     [ReadOnly]
     public bool lockOn;
     [ReadOnly]
     public bool rolling;
+    [ReadOnly]
+    public Vector2 rollInput;
 
     public override void Awake()
     {
@@ -50,10 +53,13 @@ public class Player : Agent
     public void Update()
     {
         canMove = Animator.GetBool("canMove");
+        rolling = Animator.GetBool("rolling");
 
         HandleMovement();
+
         if (canMove)
             RotateTransform();
+
         UpdateAnimationValues();
     }
 
@@ -94,15 +100,46 @@ public class Player : Agent
 
     private void UpdateAnimationValues()
     {
+        float v = input.Current.MoveInput.z;
+        float h = input.Current.MoveInput.x;
+
+        if (input.Current.RollInput)
+        {
+            rollInput.y = input.Current.MoveInput.z;
+            rollInput.x = input.Current.MoveInput.x;
+        }
+
         if (lockOn)
         {
-            Animator.SetFloat("vertical", input.Current.MoveInput.z, 0.2f, controller.DeltaTime);
-            Animator.SetFloat("horizontal", input.Current.MoveInput.x, 0.1f, controller.DeltaTime);
-        }
-        else if (!rolling)
-            Animator.SetFloat("vertical", moveAmount);
-        else
+            Animator.SetFloat("vertical", v, 0.2f, controller.DeltaTime);
+            Animator.SetFloat("horizontal", h, 0.1f, controller.DeltaTime);
             return;
+        }
+
+        if (rolling)
+        {
+            if (lockOn == false)
+            {
+                rollInput.y = 1;
+                rollInput.x = 0;
+                Animator.SetFloat("vertical", rollInput.y);
+                Animator.SetFloat("horizontal", rollInput.x);
+                return;
+            }
+            else
+            {
+                if (Mathf.Abs(rollInput.y) > 0.3f)
+                    rollInput.y = 0f;
+                if (Mathf.Abs(rollInput.x) > 0.3f)
+                    rollInput.x = 0f;
+
+                Animator.SetFloat("vertical", rollInput.y);
+                Animator.SetFloat("horizontal", rollInput.x);
+                return;
+            }
+        }
+
+        Animator.SetFloat("vertical", moveAmount);
     }
 
     #region State Management
