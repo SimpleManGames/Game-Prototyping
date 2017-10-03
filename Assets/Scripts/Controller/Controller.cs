@@ -194,7 +194,7 @@ public class Controller : SphereCastController
 
         transform.position += debugMove * DeltaTime;
 
-        agent.state.CurrentState.Update();
+        agent?.state?.CurrentState?.Update();
 
         CollisionData.Clear();
         

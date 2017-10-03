@@ -1,10 +1,8 @@
 ﻿using UnityEngine;
-using System.Collections;
-using System;
 
 public class PlayerMoveState : IState
 {
-    public StateMachine AttachedStateMachine
+    public StateMachine State
     {
         get; private set;
     }
@@ -15,9 +13,9 @@ public class PlayerMoveState : IState
     float currentSpeed;
     float speedSmoothVelocity;
 
-    public PlayerMoveState(StateMachine attachedStateMachine, Player player, Controller controller)
+    public PlayerMoveState(StateMachine state, Player player, Controller controller)
     {
-        AttachedStateMachine = attachedStateMachine;
+        State = state;
         this.player = player;
         this.controller = controller;
     }
@@ -30,60 +28,30 @@ public class PlayerMoveState : IState
 
     public void Update()
     {
-        if (player.input.Current.JumpInput)
-        {
-            AttachedStateMachine.CurrentState = new PlayerJumpState(AttachedStateMachine, player, controller);
+        if (player.HandleJumpState())
             return;
-        }
 
-        if (!player.MaintainingGround())
-        {
-            AttachedStateMachine.CurrentState = new PlayerFallState(AttachedStateMachine, player, controller);
+        if (player.HandleFallState())
             return;
-        }
-        
-        if (player.input.Current.MoveInput != Vector3.zero)
-        {
-            if (player.input.Current.RunInput)
-            {
-                player.state.CurrentState = new PlayerRunState(AttachedStateMachine, player, controller);
-                return;
-            }
 
-            Vector3 dirInputNor = player.input.Current.MoveInput.normalized;
-            player.moveDirection = Vector3.MoveTowards(player.moveDirection, player.LocalMovement() * player.moveSpeed, 30.0f * controller.DeltaTime);
-        }
-        else
-        {
-            player.state.CurrentState = new PlayerIdleState(AttachedStateMachine, player, controller);
+        if (player.HandleTargetState())
             return;
-        }
+
+        if (player.HandleIdleState())
+            return;
+
+        if (player.HandleRollState())
+            return;
+                
+        Vector3 dirInputNor = player.input.Current.MoveInput.normalized;
+        player.moveDirection = Vector3.MoveTowards(player.moveDirection, player.LocalMovement() * player.moveSpeed, 30.0f * controller.DeltaTime);
+
+        if (player.HandleRunState())
+            return;
     }
 
     public void Exit()
     {
-        player.moveDirection.y = 0f;
-    }
 
-    private Vector3 LocalMovement()
-    {
-        Vector3 lookDirection = player.cameraRigTransform.forward;
-        lookDirection.y = 0f;
-
-        Vector3 right = Vector3.Cross(controller.Up, lookDirection);
-
-        Vector3 local = Vector3.zero;
-
-        if (player.input.Current.MoveInput.x != 0)
-        {
-            local += right * player.input.Current.MoveInput.x;
-        }
-
-        if (player.input.Current.MoveInput.z != 0)
-        {
-            local += lookDirection * player.input.Current.MoveInput.z;
-        }
-
-        return local.normalized;
     }
 }

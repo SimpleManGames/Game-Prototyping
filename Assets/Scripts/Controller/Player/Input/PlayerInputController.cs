@@ -1,9 +1,11 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class PlayerInputController : MonoBehaviour
 {
-
+    [SerializeField, ReadOnly]
     public PlayerInput Current;
+    private PlayerInput previous;
     public Vector2 RightStickMultiplier = new Vector2(3, -1.5f);
 
     // Use this for initialization
@@ -15,6 +17,7 @@ public class PlayerInputController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        previous = Current;
 
         // Retrieve our current WASD or Arrow Key input
         // Using GetAxisRaw removes any kind of gravity or filtering being applied to the input
@@ -31,6 +34,8 @@ public class PlayerInputController : MonoBehaviour
 
         bool jumpInput = Input.GetButtonDown("Jump");
         bool runInput = Input.GetButton("Run");
+        bool targetInput = Input.GetButtonDown("Target") ? !Current.TargetInput : Current.TargetInput;
+        bool rollInput = Input.GetButtonDown("Roll");
 
         Current = new PlayerInput()
         {
@@ -38,16 +43,24 @@ public class PlayerInputController : MonoBehaviour
             MouseInput = mouseInput,
             RightStickInput = rightStickInput,
             JumpInput = jumpInput,
-            RunInput = runInput
+            RunInput = runInput,
+            TargetInput = targetInput,
+            RollInput = rollInput
         };
     }
 }
 
+[Serializable]
 public struct PlayerInput
 {
+    [Header("Input")]
     public Vector3 MoveInput;
     public Vector2 MouseInput;
     public Vector2 RightStickInput;
+    [HideInInspector]
     public bool JumpInput;
     public bool RunInput;
+    public bool TargetInput;
+    [HideInInspector]
+    public bool RollInput;
 }

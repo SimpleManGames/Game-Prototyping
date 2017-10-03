@@ -1,36 +1,31 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Controller))]
-public class Enemy : Agent
+[SelectionBase, RequireComponent(typeof(Controller))]
+public class Enemy : Agent, ITargetable
 {
     Controller controller;
 
     // DEBUG
     System.Diagnostics.Stopwatch watch = new System.Diagnostics.Stopwatch();
 
-    public override void Start()
+    [SerializeField]
+    private float targetOffset;
+    public float TargetOffset
     {
-        controller = GetComponent<Controller>();
-        base.Start();
+        get { return targetOffset; }
     }
 
-    private void Update()
+    public override void Start()
     {
-        if (CombatManager.Instance.CurrentAgentTurn == this)
-        {
-            Debug.Log("Currently Enemies turn");
+        base.Start();
+        controller = GetComponent<Controller>();
+    }
 
-            if (!watch.IsRunning)
-                watch.Start();
-            
-            if (watch.ElapsedMilliseconds >= 1000f)
-            {
-                watch.Stop();
-                watch.Reset();
-                CombatManager.Instance.NextTurn();
-            }
-        }
+    public Vector3 TargetPosition()
+    {
+        return transform.position + (Vector3.up * targetOffset);
     }
 }

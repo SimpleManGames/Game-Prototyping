@@ -2,7 +2,7 @@
 
 public class PlayerJumpState : IState
 {
-    public StateMachine AttachedStateMachine
+    public StateMachine State
     {
         get; private set;
     }
@@ -13,9 +13,9 @@ public class PlayerJumpState : IState
     float currentSpeed;
     float speedSmoothVelocity;
 
-    public PlayerJumpState(StateMachine asm, Player p, Controller c)
+    public PlayerJumpState(StateMachine state, Player p, Controller c)
     {
-        AttachedStateMachine = asm;
+        State = state;
         player = p;
         controller = c;
     }
@@ -33,14 +33,13 @@ public class PlayerJumpState : IState
 
     public void Update()
     {
-
         Vector3 planarMoveDirection = Math3D.ProjectVectorOnPlane(controller.Up, player.moveDirection);
         Vector3 verticalMoveDirection = player.moveDirection - planarMoveDirection;
 
         if (Vector3.Angle(verticalMoveDirection, controller.Up) > 90 && player.AcquiringGround())
         {
             player.moveDirection = planarMoveDirection;
-            AttachedStateMachine.CurrentState = new PlayerIdleState(AttachedStateMachine, player, controller);
+            State.CurrentState = new PlayerIdleState(State, player, controller);
             return;
         }
 
@@ -54,5 +53,8 @@ public class PlayerJumpState : IState
     {
         player.Animator.SetBool("jump", false);
         player.Animator.CrossFade("jump_land", .0f);
+
+        controller.EnableSlopeLimit();
+        controller.EnableClamping();
     }
 }

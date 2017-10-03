@@ -1,13 +1,13 @@
 ﻿public class PlayerFallState : IState
 {
-    public StateMachine AttachedStateMachine { get; private set; }
+    public StateMachine State { get; private set; }
 
     Player player;
     Controller controller;
 
     public PlayerFallState(StateMachine attachedStateMachine, Player player, Controller controller)
     {
-        AttachedStateMachine = attachedStateMachine;
+        State = attachedStateMachine;
         this.player = player;
         this.controller = controller;
     }
@@ -26,7 +26,7 @@
         if (player.AcquiringGround())
         {
             player.moveDirection = Math3D.ProjectVectorOnPlane(controller.Up, player.moveDirection);
-            AttachedStateMachine.CurrentState = new PlayerIdleState(AttachedStateMachine, player, controller);
+            State.CurrentState = new PlayerIdleState(State, player, controller);
             return;
         }
 
@@ -36,5 +36,8 @@
     public void Exit()
     {
         player.Animator.SetBool("onGround", true);
+
+        controller.EnableSlopeLimit();
+        controller.EnableClamping();
     }
 }

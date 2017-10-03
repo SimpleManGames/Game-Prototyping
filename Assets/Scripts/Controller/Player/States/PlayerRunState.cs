@@ -1,9 +1,8 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PlayerRunState : IState
 {
-    public StateMachine AttachedStateMachine
+    public StateMachine State
     {
         get; private set;
     }
@@ -13,47 +12,41 @@ public class PlayerRunState : IState
 
     public PlayerRunState(StateMachine attachedStateMachine, Player player, Controller controller)
     {
-        this.AttachedStateMachine = attachedStateMachine;
+        this.State = attachedStateMachine;
         this.player = player;
         this.controller = controller;
     }
 
-
     public void Start()
     {
         player.Animator.SetBool("run", true);
+
+        controller.EnableSlopeLimit();
+        controller.EnableClamping();
     }
 
     public void Update()
     {
-        if (player.input.Current.JumpInput)
-        {
-            AttachedStateMachine.CurrentState = new PlayerJumpState(AttachedStateMachine, player, controller);
+        if (player.HandleJumpState())
             return;
-        }
 
-        if (!player.MaintainingGround())
-        {
-            AttachedStateMachine.CurrentState = new PlayerFallState(AttachedStateMachine, player, controller);
+        if (player.HandleFallState())
             return;
-        }
 
-        if (player.input.Current.MoveInput != Vector3.zero)
-        {
-            if (!player.input.Current.RunInput)
-            {
-                player.state.CurrentState = new PlayerMoveState(AttachedStateMachine, player, controller);
-                return;
-            }
-
-            Vector3 dirInputNor = player.input.Current.MoveInput.normalized;
-            player.moveDirection = Vector3.MoveTowards(player.moveDirection, player.LocalMovement() * player.runSpeed, 30.0f * controller.DeltaTime);
-        }
-        else
-        {
-            player.state.CurrentState = new PlayerIdleState(AttachedStateMachine, player, controller);
+        if (player.HandleTargetState())
             return;
-        }
+
+        if (player.HandleIdleState())
+            return;
+        
+        if (player.HandleRollState())
+            return;
+
+        Vector3 dirInputNor = player.input.Current.MoveInput.normalized;
+        player.moveDirection = Vector3.MoveTowards(player.moveDirection, player.LocalMovement() * player.runSpeed, 30.0f * controller.DeltaTime);
+
+        if (player.HandleMoveState())
+            return;
     }
 
     public void Exit()

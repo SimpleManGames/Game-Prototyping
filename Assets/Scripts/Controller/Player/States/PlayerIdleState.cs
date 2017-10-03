@@ -5,11 +5,11 @@ public sealed class PlayerIdleState : IState
     private Player player;
     private Controller controller;
 
-    public StateMachine AttachedStateMachine { get; private set; }
+    public StateMachine State { get; private set; }
 
-    public PlayerIdleState(StateMachine attachedStateMachine, Player player, Controller controller)
+    public PlayerIdleState(StateMachine state, Player player, Controller controller)
     {
-        AttachedStateMachine = attachedStateMachine;
+        State = state;
 
         this.player = player;
         this.controller = controller;
@@ -25,22 +25,20 @@ public sealed class PlayerIdleState : IState
 
     public void Update()
     {
-        if (player.input.Current.JumpInput)
-        {
-            AttachedStateMachine.CurrentState = new PlayerJumpState(AttachedStateMachine, player, controller);
+        if (player.HandleJumpState())
             return;
-        }
 
-        if (!player.MaintainingGround())
-        {
-            AttachedStateMachine.CurrentState = new PlayerFallState(AttachedStateMachine, player, controller);
+        if (player.HandleFallState())
             return;
-        }
 
-        if (player.input.Current.MoveInput != Vector3.zero)
-        {
-            player.state.CurrentState = new PlayerMoveState(player.state, player, controller);
-        }
+        if (player.HandleTargetState())
+            return;
+
+        if (player.HandleMoveState())
+            return;
+
+        if (player.HandleRollState())
+            return;
 
         player.moveDirection = Vector3.MoveTowards(player.moveDirection, Vector3.zero, 25f * controller.DeltaTime);
     }

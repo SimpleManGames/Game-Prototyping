@@ -6,8 +6,29 @@ public class CameraController : MonoBehaviour
 {
     [SerializeField]
     private Transform target = null;
+
+    [Header("Lock On Info")]
     [SerializeField]
-    private float verticalOffset;
+    private Transform lockOnTarget = null;
+    public Transform LockOnTarget
+    {
+        get { return lockOnTarget; }
+    }
+
+    [SerializeField, ReadOnly]
+    private bool lockOn;
+    public bool LockOn
+    {
+        get { return lockOn && lockOnTarget != null; }
+        set
+        {
+            lockOn = value;
+        }
+    }
+
+    [SerializeField]
+    private bool debugLockOn = false;
+
     private Player playerController;
 
     private Vector2 mouse;
@@ -15,7 +36,8 @@ public class CameraController : MonoBehaviour
 
     private Vector2 currentRotation;
 
-    public CameraSettings settings;
+    [SerializeField]
+    private CameraSettings settings;
 
     private Transform cameraTransform;
 
@@ -45,6 +67,9 @@ public class CameraController : MonoBehaviour
 
     void Update()
     {
+        if (HandleLockOn())
+            return;
+
         float inputX = playerController.input.Current.RightStickInput.x;
         float inputZ = playerController.input.Current.RightStickInput.y;
 
@@ -63,13 +88,41 @@ public class CameraController : MonoBehaviour
 
     private void LateUpdate()
     {
-        CameraUpdater();
+        float step = settings.moveSpeed * Time.deltaTime;
+        transform.position = Vector3.MoveTowards(transform.position, target.position + new Vector3(0, settings.verticalOffset, 0), step);
     }
 
-    private void CameraUpdater()
+    private bool HandleLockOn()
     {
-        float step = settings.moveSpeed * Time.deltaTime;
-        transform.position = Vector3.MoveTowards(transform.position, target.position + new Vector3(0, verticalOffset, 0), step);
+        if (LockOn)
+        {
+            if (debugLockOn)
+            {
+                Debug.Log("Lock On");
+                if (target != null && lockOnTarget != null)
+                    Debug.DrawLine(target.position, lockOnTarget.position);
+            }
+
+            Vector3 targetDirection = lockOnTarget.position - target.position;
+            targetDirection.Normalize();
+            //targetDirection.y = 0f;
+
+            if (targetDirection == Vector3.zero)
+                targetDirection = transform.forward;
+
+            Quaternion targetRotation = Quaternion.LookRotation(targetDirection);
+            var slerp = Quaternion.Slerp(transform.rotation, targetRotation, settings.lockOnRotationSmoothTime);
+
+            transform.rotation = slerp;
+            slerp = Quaternion.Euler(new Vector3(0f, slerp.eulerAngles.y, slerp.eulerAngles.z));
+            target.rotation = slerp;
+
+            currentRotation = targetRotation.eulerAngles;
+
+            return true;
+        }
+
+        return false;
     }
 
     private void OnValidate()
@@ -80,7 +133,7 @@ public class CameraController : MonoBehaviour
         cameraTransform.localPosition = settings.distance;
 
         if (target != null)
-            transform.position = target.position + new Vector3(0, verticalOffset, 0);
+            transform.position = target.position + new Vector3(0, settings.verticalOffset, 0);
     }
 
     [Serializable]
@@ -91,11 +144,13 @@ public class CameraController : MonoBehaviour
         public float moveSpeed;
         public float sensitivity;
         public Vector3 distance;
+        public float verticalOffset;
 
         [Range(0, 90)]
         public float clampAngle;
 
         public float rotationSmoothTime;
+        public float lockOnRotationSmoothTime;
 
         public void ActOnSettings()
         {

@@ -6,7 +6,7 @@
 /// </summary>
 public interface IState
 {
-    StateMachine AttachedStateMachine { get; }
+    StateMachine State { get; }
 
     /// <summary>
     /// Excutes when this is set to a StateMachine's CurrentState
