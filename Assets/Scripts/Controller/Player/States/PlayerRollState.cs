@@ -18,14 +18,17 @@ class PlayerRollState : IState
     public void Start()
     {
         player.Animator.applyRootMotion = true;
-        player.Animator.CrossFade("Rolls", 0.15f);
+        player.Animator.CrossFade("Rolls", 0f);
 
-
+        player.rolling = true;
     }
 
     public void Update()
     {
         int i = player.Animator.GetLayerIndex("Override");
+        bool isRolling = player.Animator.GetCurrentAnimatorStateInfo(i).IsName("Rolling");
+
+        
         if (!player.rolling)
             State.CurrentState = new PlayerIdleState(State, player, controller);
     }
@@ -33,6 +36,7 @@ class PlayerRollState : IState
     public void Exit()
     {
         player.Animator.applyRootMotion = false;
-        player.Animator.SetBool("rolling", false);
+
+        player.rolling = false;
     }
 }

@@ -764,7 +764,7 @@ MonoBehaviour:
   rotateSpeed: 20
   airControlPercent: 0
   state:
-    debugStateChanges: 1
+    debugStateChanges: 0
   input: {fileID: 0}
   cameraRigTransform: {fileID: 0}
   moveDirection: {x: 0, y: 0, z: 0}
@@ -772,6 +772,7 @@ MonoBehaviour:
   canMove: 0
   lockOn: 0
   rolling: 0
+  rollInput: {x: 0, y: 0}
 --- !u!114 &589063939
 MonoBehaviour:
   m_ObjectHideFlags: 0

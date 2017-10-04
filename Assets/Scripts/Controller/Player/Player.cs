@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using UnityEditor.Animations;
+using UnityEngine;
 
 [SelectionBase, RequireComponent(typeof(Controller)), RequireComponent(typeof(PlayerInputController))]
 public class Player : Agent
@@ -20,13 +21,14 @@ public class Player : Agent
     public Vector3 moveDirection;
     [SerializeField, ReadOnly]
     private float moveAmount;
-    public float MoveAmount { get; }
+    public float MoveAmount { get; set; }
     [ReadOnly]
     public bool canMove;
     [ReadOnly]
     public bool lockOn;
     [ReadOnly]
     public bool rolling;
+    public float rollModifier = 1;
     [ReadOnly]
     public Vector2 rollInput;
 
@@ -109,8 +111,16 @@ public class Player : Agent
             rollInput.x = input.Current.MoveInput.x;
         }
 
+
         if (lockOn)
         {
+            if (rolling)
+            {
+                Animator.SetFloat("vertical", rollInput.y);
+                Animator.SetFloat("horizontal", rollInput.x);
+                return;
+            }
+
             Animator.SetFloat("vertical", v, 0.2f, controller.DeltaTime);
             Animator.SetFloat("horizontal", h, 0.1f, controller.DeltaTime);
             return;
@@ -118,10 +128,13 @@ public class Player : Agent
 
         if (rolling)
         {
+            ChildMotion motion = new ChildMotion();
+            
             if (lockOn == false)
             {
                 rollInput.y = 1;
                 rollInput.x = 0;
+
                 Animator.SetFloat("vertical", rollInput.y);
                 Animator.SetFloat("horizontal", rollInput.x);
                 return;
@@ -139,7 +152,10 @@ public class Player : Agent
             }
         }
 
-        Animator.SetFloat("vertical", moveAmount);
+        if (canMove)
+        {
+            Animator.SetFloat("vertical", moveAmount);
+        }
     }
 
     #region State Management
