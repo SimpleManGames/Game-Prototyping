@@ -8,11 +8,12 @@ public class CameraController : MonoBehaviour
     private Transform target = null;
 
     [Header("Lock On Info")]
-    [SerializeField]
-    private Transform lockOnTarget = null;
+    [SerializeField, ReadOnly]
+    private Transform lockOnTarget;
     public Transform LockOnTarget
     {
         get { return lockOnTarget; }
+        set { lockOnTarget = value; }
     }
 
     [SerializeField, ReadOnly]
@@ -20,10 +21,7 @@ public class CameraController : MonoBehaviour
     public bool LockOn
     {
         get { return lockOn && lockOnTarget != null; }
-        set
-        {
-            lockOn = value;
-        }
+        set { lockOn = value; }
     }
 
     [SerializeField]
@@ -105,7 +103,6 @@ public class CameraController : MonoBehaviour
 
             Vector3 targetDirection = lockOnTarget.position - target.position;
             targetDirection.Normalize();
-            //targetDirection.y = 0f;
 
             if (targetDirection == Vector3.zero)
                 targetDirection = transform.forward;

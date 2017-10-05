@@ -30,13 +30,12 @@ class PlayerRollState : IState
 
         
         if (!player.rolling)
-            State.CurrentState = new PlayerIdleState(State, player, controller);
+            State.CurrentState = State.PreviousState;
     }
 
     public void Exit()
     {
         player.Animator.applyRootMotion = false;
-
         player.rolling = false;
     }
 }

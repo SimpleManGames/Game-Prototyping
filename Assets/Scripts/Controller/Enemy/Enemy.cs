@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 [SelectionBase, RequireComponent(typeof(Controller))]
 public class Enemy : Agent, ITargetable
@@ -16,6 +13,12 @@ public class Enemy : Agent, ITargetable
     public float TargetOffset
     {
         get { return targetOffset; }
+    }
+
+    public bool IsTargetable()
+    {
+        Vector3 screenPoint = GameManager.Instance.Camera.WorldToViewportPoint(TargetPosition());
+        return screenPoint.z > 0 && screenPoint.x > 0 && screenPoint.x < 1 && screenPoint.y > 0 && screenPoint.y < 1;
     }
 
     public override void Start()

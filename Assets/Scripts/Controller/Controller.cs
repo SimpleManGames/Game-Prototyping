@@ -117,8 +117,8 @@ public class Controller : SphereCastController
 
         hRadius = radius / 2;
 
-        if (ownCollider)
-            IgnoreCollider(ownCollider);
+        foreach (Collider collider in ownCollider)
+            IgnoreCollider(collider);
 
         if (defaultCollisionType == null)
             defaultCollisionType = new GameObject("DefaultCollisionType", typeof(CollisionType)).GetComponent<CollisionType>();

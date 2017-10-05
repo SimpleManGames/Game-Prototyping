@@ -5,7 +5,8 @@ public class PlayerInputController : MonoBehaviour
 {
     [SerializeField, ReadOnly]
     public PlayerInput Current;
-    private PlayerInput previous;
+    [HideInInspector]
+    public PlayerInput previous;
     public Vector2 RightStickMultiplier = new Vector2(3, -1.5f);
 
     // Use this for initialization
@@ -32,6 +33,7 @@ public class PlayerInputController : MonoBehaviour
         mouseInput.x = rightStickInput.x != 0 ? rightStickInput.x * RightStickMultiplier.x : mouseInput.x;
         mouseInput.y = rightStickInput.y != 0 ? rightStickInput.y * RightStickMultiplier.y : mouseInput.y;
 
+        bool neutral = rightStickInput == Vector2.zero;
         bool jumpInput = Input.GetButtonDown("Jump");
         bool runInput = Input.GetButton("Run");
         bool targetInput = Input.GetButtonDown("Target") ? !Current.TargetInput : Current.TargetInput;
@@ -42,6 +44,7 @@ public class PlayerInputController : MonoBehaviour
             MoveInput = moveInput,
             MouseInput = mouseInput,
             RightStickInput = rightStickInput,
+            RightStickNeutral = neutral,
             JumpInput = jumpInput,
             RunInput = runInput,
             TargetInput = targetInput,
@@ -57,6 +60,7 @@ public struct PlayerInput
     public Vector3 MoveInput;
     public Vector2 MouseInput;
     public Vector2 RightStickInput;
+    public bool RightStickNeutral;
     [HideInInspector]
     public bool JumpInput;
     public bool RunInput;

@@ -1,4 +1,5 @@
-﻿using UnityEditor.Animations;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 [SelectionBase, RequireComponent(typeof(Controller)), RequireComponent(typeof(PlayerInputController))]
@@ -15,6 +16,8 @@ public class Player : Agent
     public Animator Animator { get; private set; }
     private GameObject modelObject;
 
+    #region Movement Info
+
     [Header("Movement Info")]
     [ReadOnly, Tooltip("Describes the direction the player controller is trying to move. " +
         "If you want to manually move this, use the Controller's debug move")]
@@ -22,15 +25,25 @@ public class Player : Agent
     [SerializeField, ReadOnly]
     private float moveAmount;
     public float MoveAmount { get; set; }
-    [ReadOnly]
-    public bool canMove;
-    [ReadOnly]
-    public bool lockOn;
-    [ReadOnly]
-    public bool rolling;
+    [ReadOnly] public bool canMove;
+    [ReadOnly] public bool lockOn;
+    [ReadOnly] public bool rolling;
     public float rollModifier = 1;
-    [ReadOnly]
-    public Vector2 rollInput;
+    [ReadOnly] public Vector2 rollInput;
+
+    #endregion
+
+    [SerializeField] private float targetableRange = 20f;
+    [SerializeField] private LayerMask targetableLayer;
+    [SerializeField, ReadOnly] private List<GameObject> targetables = new List<GameObject>();
+    public List<GameObject> Targetables
+    {
+        get { return targetables; }
+    }
+    [Obsolete] private float halfVisionConeSize = 45f;
+
+    [Header("Debug")]
+    [SerializeField] private bool debugTargets;
 
     public override void Awake()
     {
@@ -63,6 +76,20 @@ public class Player : Agent
             RotateTransform();
 
         UpdateAnimationValues();
+
+        //DetectTargetables();
+
+        CheckTargetRadius();
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        int mask = 1 << targetableLayer;
+        if (other.gameObject.layer == controller.walkable)
+        {
+            Debug.Log("Hit mask");
+            return;
+        }
     }
 
     private void HandleMovement()
@@ -128,8 +155,6 @@ public class Player : Agent
 
         if (rolling)
         {
-            ChildMotion motion = new ChildMotion();
-            
             if (lockOn == false)
             {
                 rollInput.y = 1;
@@ -156,6 +181,79 @@ public class Player : Agent
         {
             Animator.SetFloat("vertical", moveAmount);
         }
+    }
+
+    [Obsolete("This method is no longer used, just want to keep it around")]
+    private void DetectTargetablesInCone()
+    {
+        var hits = Physics.OverlapSphere(transform.position, 25f, targetableLayer, QueryTriggerInteraction.Collide);
+
+        if (hits.Length == 0)
+            return;
+
+        foreach (var hit in hits)
+        {
+            if (hit.gameObject.GetComponent(typeof(ITargetable)))
+            {
+                Vector3 myPos = transform.position;
+                Vector3 myVector = transform.forward;
+                Vector3 theirPos = hit.transform.position;
+                Vector3 theirVector = theirPos - myPos;
+
+                float mag = Vector3.SqrMagnitude(myVector) * Vector3.SqrMagnitude(theirVector);
+
+                if (mag == 0f)
+                    return;
+
+                float dotProd = Vector3.Dot(myVector, theirPos - myPos);
+                bool isNegative = dotProd < 0f;
+                dotProd *= dotProd;
+
+                if (isNegative)
+                    dotProd *= -1;
+
+                float sqrAngle = Mathf.Rad2Deg * Mathf.Acos(dotProd / mag);
+                bool isInFront = sqrAngle < halfVisionConeSize;
+
+                Debug.DrawLine(myPos, theirPos, isInFront ? Color.green : Color.red);
+                if (isInFront)
+                {
+                    int mask = 1 << controller.walkable;
+                    if (!Physics.Linecast(myPos, theirPos, mask))
+                    {
+                        Debug.Log("See target " + hit.name);
+                    }
+                }
+            }
+        }
+    }
+
+    private void CheckTargetRadius()
+    {
+        targetables.Clear();
+        var hits = Physics.OverlapSphere(transform.position, 25f, targetableLayer, QueryTriggerInteraction.Collide);
+
+        if (hits.Length == 0)
+            return;
+
+        foreach (var hit in hits)
+        {
+            ITargetable target = hit.gameObject.GetComponent(typeof(ITargetable)) as ITargetable;
+            if (target == null)
+                continue;
+
+            if (!target.IsTargetable())
+                continue;
+
+            Vector3 playerPosition = transform.position + (Vector3.up * controller.Height / 2);
+
+            if (!Physics.Linecast(playerPosition, target.TargetPosition(), controller.walkable))
+                targetables.Add(hit.gameObject);
+        }
+
+        if (debugTargets)
+            foreach (var target in targetables)
+                Debug.DrawLine(transform.position + (Vector3.up * controller.Height / 2), (target.transform.GetComponent(typeof(ITargetable)) as ITargetable).TargetPosition());
     }
 
     #region State Management
@@ -216,7 +314,7 @@ public class Player : Agent
 
     public bool HandleTargetState()
     {
-        if (input.Current.TargetInput)
+        if (input.Current.TargetInput && Targetables.Count > 0)
         {
             state.CurrentState = new PlayerLockOnState(state, this, controller, null);
             return true;

@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 
 public class PlayerLockOnState : IState
 {
@@ -10,6 +12,7 @@ public class PlayerLockOnState : IState
     Controller controller;
     Player player;
 
+    CameraController cameraController;
     ITargetable targetObject;
 
     public PlayerLockOnState(StateMachine state, Player player, Controller controller, ITargetable targetObject)
@@ -29,6 +32,10 @@ public class PlayerLockOnState : IState
         controller.EnableClamping();
 
         player.lockOn = true;
+        cameraController = player.cameraRigTransform.GetComponent<CameraController>();
+
+        if (cameraController.LockOnTarget == null)
+            cameraController.LockOnTarget = player.Targetables.First().transform;
     }
 
     public void Update()
@@ -66,13 +73,54 @@ public class PlayerLockOnState : IState
         {
             player.moveDirection = Vector3.MoveTowards(player.moveDirection, Vector3.zero, 50f * controller.DeltaTime);
         }
+
+        // TODO: Implement an option for keyboard mouse
+        if (player.input.Current.RightStickInput != Vector2.zero && player.input.previous.RightStickNeutral)
+        {
+            List<GameObject> potentialTargetChanges = new List<GameObject>();
+            foreach (var target in player.Targetables)
+            {
+                if (target.transform == cameraController.LockOnTarget)
+                {
+                    continue;
+                }
+
+                Vector3 relativePoint = player.transform.InverseTransformPoint(target.transform.position);
+                if (Mathf.Sign(relativePoint.x) == Mathf.Sign(player.input.Current.RightStickInput.x))
+                {
+                    potentialTargetChanges.Add(target);
+                }
+            }
+
+            if (potentialTargetChanges.Count == 0)
+                return;
+
+            float closestDistance = float.MaxValue;
+            Transform closest = null;
+
+            foreach (var potentialTarget in potentialTargetChanges)
+            {
+                float distCheck = Mathf.Abs(Vector3.Distance(cameraController.LockOnTarget.position, potentialTarget.transform.position));
+                if (distCheck < closestDistance)
+                {
+                    closest = potentialTarget.transform;
+                    closestDistance = distCheck;
+                }
+            }
+
+            Debug.DrawLine(cameraController.LockOnTarget.position, closest.position, Color.yellow, 2f);
+            
+            if (closest != null)
+                cameraController.LockOnTarget = closest;
+        }
     }
 
     public void ExitLockOn()
     {
         player.input.Current.TargetInput = false;
         player.Animator.SetBool("lockon", false);
-        player.cameraRigTransform.GetComponent<CameraController>().LockOn = false;
+        cameraController.LockOnTarget = null;
+        cameraController.LockOn = false;
         player.lockOn = false;
     }
 

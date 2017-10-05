@@ -7,7 +7,7 @@ public class SphereCastController : MonoBehaviour
     public LayerMask walkable;
 
     [SerializeField]
-    protected Collider ownCollider;
+    protected Collider[] ownCollider;
 
     [SerializeField]
     protected float radius = 0.5f;

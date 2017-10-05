@@ -9,4 +9,6 @@ public interface ITargetable
 {
     float TargetOffset { get; }
     Vector3 TargetPosition();
+
+    bool IsTargetable();
 }

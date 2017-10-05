@@ -22,10 +22,18 @@ public class GameManager : Singleton<GameManager>
         get { return _player; }
     }
 
+    [SerializeField, ReadOnly]
+    private Camera _camera;
+    public Camera Camera
+    {
+        get { return _camera; }
+    }
+
     public override void Awake()
     {
         base.Awake();
         _player = FindObjectOfType<Player>();
+        _camera = FindObjectOfType<Camera>();
     }
 
     public void Update()
