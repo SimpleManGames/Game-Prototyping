@@ -6,8 +6,6 @@
 /// </summary>
 public interface IState
 {
-    StateMachine State { get; }
-
     /// <summary>
     /// Excutes when this is set to a StateMachine's CurrentState
     /// </summary>

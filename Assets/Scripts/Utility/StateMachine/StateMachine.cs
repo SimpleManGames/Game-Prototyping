@@ -56,6 +56,7 @@ public class StateMachine
         CurrentState = startState;
     }
 
+    // Cleans up the CurrentState
     ~StateMachine()
     {
         CurrentState?.Exit();

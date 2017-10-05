@@ -29,15 +29,23 @@ public class GameManager : Singleton<GameManager>
         _player = FindObjectOfType<Player>();
         _camera = FindObjectOfType<Camera>();
 
-        _stateMachine = new StateMachine();
+        _stateMachine = _stateMachine ?? new StateMachine();
+
+        //if (_stateMachine == null)
+          //  _stateMachine = new StateMachine();
     }
 
     public void Update()
     {
         if (Input.GetKeyDown(KeyCode.R))
-        {
-            Player.transform.position = Vector3.zero;
-            Player.moveDirection = Vector3.zero;
-        }
+            ResetPlayer();
+
+        _stateMachine?.CurrentState?.Update();
+    }
+
+    public void ResetPlayer()
+    {
+        Player.transform.position = Vector3.zero;
+        Player.moveDirection = Vector3.zero;
     }
 }
