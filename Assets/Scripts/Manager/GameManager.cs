@@ -1,10 +1,14 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using UnityEditor;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class GameManager : Singleton<GameManager>
 {
+    [SerializeField]
+    private StateMachine _stateMachine;
+    public StateMachine StateMachine
+    {
+        get { return _stateMachine; }
+    }
+
     [SerializeField, ReadOnly]
     private Player _player;
     public Player Player
@@ -24,6 +28,8 @@ public class GameManager : Singleton<GameManager>
         base.Awake();
         _player = FindObjectOfType<Player>();
         _camera = FindObjectOfType<Camera>();
+
+        _stateMachine = new StateMachine();
     }
 
     public void Update()

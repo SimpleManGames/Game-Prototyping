@@ -46,4 +46,18 @@ public class StateMachine
             _currentState.Start();
         }
     }
+
+    public StateMachine()
+    {
+
+    }
+    public StateMachine(IState startState)
+    {
+        CurrentState = startState;
+    }
+
+    ~StateMachine()
+    {
+        CurrentState?.Exit();
+    }
 }
