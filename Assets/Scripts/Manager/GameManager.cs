@@ -6,16 +6,6 @@ using UnityEngine;
 public class GameManager : Singleton<GameManager>
 {
     [SerializeField, ReadOnly]
-    private GameStateEnum _currentState;
-    public GameStateEnum CurrentState
-    {
-        get
-        {
-            return _currentState;
-        }
-    }
-
-    [SerializeField, ReadOnly]
     private Player _player;
     public Player Player
     {
