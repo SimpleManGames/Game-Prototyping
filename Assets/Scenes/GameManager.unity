@@ -151,3 +151,4 @@ MonoBehaviour:
   destroyOnLoad: 0
   _currentState: 0
   _player: {fileID: 0}
+  _camera: {fileID: 0}
