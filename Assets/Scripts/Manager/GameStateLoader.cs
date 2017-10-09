@@ -1,15 +1,25 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameStateLoader : MonoBehaviour
 {
     [SerializeField]
-    public string stateScriptName;
+    private string stateScriptName;
 
-    void Start()
+    private void Awake()
     {
+        if (GameManager.Instance == null)
+            SceneManager.LoadScene("GameManager", LoadSceneMode.Additive);
+    }
+
+    private void Start()
+    {
+        if (String.IsNullOrEmpty(stateScriptName))
+            return;
+
         Type[] result = AppDomain.CurrentDomain.GetAllDerivedTypes_IsAssignableFrom(typeof(IState));
-        
+
         foreach (Type type in result)
         {
             if (type.ToString() == stateScriptName)

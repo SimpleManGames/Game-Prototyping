@@ -30,9 +30,6 @@ public class GameManager : Singleton<GameManager>
         _camera = FindObjectOfType<Camera>();
 
         _stateMachine = _stateMachine ?? new StateMachine();
-
-        //if (_stateMachine == null)
-          //  _stateMachine = new StateMachine();
     }
 
     public void Update()

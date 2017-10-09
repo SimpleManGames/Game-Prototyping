@@ -320,6 +320,7 @@ public class Player : Agent
             return true;
         }
 
+        input.Current.TargetInput = false;
         return false;
     }
 

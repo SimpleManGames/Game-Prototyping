@@ -30,8 +30,7 @@ public class Agent : MonoBehaviour, IGravity
 
     public virtual void Awake()
     {
-        if (state == null)
-            state = new StateMachine();
+        state = state ?? new StateMachine();
     }
 
     public virtual void Start()

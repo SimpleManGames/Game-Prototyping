@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
+[Serializable]
 public class MenuState : IState
 {
     public void Start()
@@ -11,7 +10,6 @@ public class MenuState : IState
 
     public void Update()
     {
-        Debug.Log("Running");
     }
 
     public void Exit()
