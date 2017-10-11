@@ -19,7 +19,7 @@ public class GameStateLoader : MonoBehaviour
             return;
 
         Type[] result = AppDomain.CurrentDomain.GetAllDerivedTypes_IsAssignableFrom(typeof(IState));
-
+        
         foreach (Type type in result)
         {
             if (type.ToString() == stateScriptName)
@@ -28,7 +28,16 @@ public class GameStateLoader : MonoBehaviour
                 return;
             }
         }
+        
     }
 
-    void Update() { }
+    public void LoadScene(string scene)
+    {
+        SceneManager.LoadScene(scene);
+    }
+
+    public void Quit()
+    {
+        GameManager.Instance.Quit();
+    }
 }

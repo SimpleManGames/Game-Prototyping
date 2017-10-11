@@ -260,7 +260,7 @@ public class Player : Agent
 
     public bool MaintainingGround()
     {
-        return controller.CurrentGround.IsGrounded(true, 0.5f);
+        return controller.CurrentGround.IsGrounded(true, 1f);
     }
 
     public bool AcquiringGround()

@@ -735,7 +735,7 @@ public class Controller : SphereCastController
             {
                 groundNormal = farGround.Normal;
             }
-            else
+            else  
             {
                 groundNormal = primaryGround.Normal;
             }

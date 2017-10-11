@@ -45,4 +45,17 @@ public class GameManager : Singleton<GameManager>
         Player.transform.position = Vector3.zero;
         Player.moveDirection = Vector3.zero;
     }
+
+    private void OnLevelWasLoaded(int level)
+    {
+        _camera = null;
+        _camera = FindObjectOfType<Camera>();
+
+        _player = _player ?? FindObjectOfType<Player>();
+    }
+
+    public void Quit()
+    {
+        Application.Quit();
+    }
 }
