@@ -41,11 +41,11 @@ public sealed class Database
             if (subDirs != null && subDirs.Length > 0)
                 foreach (string dir in subDirs)
                     dirs.Push(dir);
-
-            OnFinishedLoading();
-
-            PostLoad();
         }
+
+        OnFinishedLoading?.Invoke();
+
+        PostLoad();
     }
 
     private void Clear()
@@ -85,7 +85,7 @@ public sealed class Database
             Debug.Log("Created table for: " + entry.GetType().ToString());
 
             table = new DatabaseTable();
-
+            
             tables.Add(entry.GetType(), table);
         }
 

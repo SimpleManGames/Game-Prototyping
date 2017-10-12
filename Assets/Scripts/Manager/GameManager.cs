@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.IO;
+using System.Linq;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class GameManager : Singleton<GameManager>
@@ -34,6 +36,15 @@ public class GameManager : Singleton<GameManager>
 
         SceneManager.sceneLoaded += LevelChange;
     }
+
+    private void Start()
+    {
+        Database.Instance.ReadFiles(Application.dataPath + "/Resources/Database");
+        Item item = Database.Instance.GetEntries<Item>().Where(i => i.DatabaseID.ToString() == "TEST_ITEM").FirstOrDefault();
+        if (item != null)
+           Debug.Log(item.PrefabPath);
+    }
+
 
     public void Update()
     {

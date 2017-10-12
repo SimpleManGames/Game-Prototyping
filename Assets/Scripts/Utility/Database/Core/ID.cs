@@ -31,10 +31,13 @@ public class ID {
     public static ID CreateID(string idString)
     {
         ID id;
-        if (idTable.TryGetValue(idString, out id))
-            return id;
+        if (!idTable.TryGetValue(idString, out id))
+        {
+            id = new ID(idString);
+            idTable[idString] = id;
+        }
 
-        return NoID;
+        return id;
     }
 
     public static ID GetID(string idString)
