@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : Singleton<GameManager>
 {
@@ -30,6 +31,8 @@ public class GameManager : Singleton<GameManager>
         _camera = FindObjectOfType<Camera>();
 
         _stateMachine = _stateMachine ?? new StateMachine();
+
+        SceneManager.sceneLoaded += LevelChange;
     }
 
     public void Update()
@@ -46,7 +49,7 @@ public class GameManager : Singleton<GameManager>
         Player.moveDirection = Vector3.zero;
     }
 
-    private void OnLevelWasLoaded(int level)
+    private void LevelChange(Scene scene, LoadSceneMode mode)
     {
         _camera = null;
         _camera = FindObjectOfType<Camera>();
