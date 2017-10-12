@@ -1,4 +1,6 @@
-# Custom Collision based 3D Controller
+# Game Prototyping
+
+### Custom Collision based 3D Controller
 This project might be migrated into a full game project
 
 Currently just developing a base for future games
