@@ -48,7 +48,7 @@ public sealed class Database
         PostLoad();
     }
 
-    private void Clear()
+    public void Clear()
     {
         tables = new Dictionary<Type, DatabaseTable>();
     }
