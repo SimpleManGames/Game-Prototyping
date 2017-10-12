@@ -1,0 +1,13 @@
+<Database>
+
+	<Item ID="TEST_ITEM">
+    	<Name>Test Item</Name>
+    	<PrefabPath>NoPath</PrefabPath>
+	</Item>
+
+	<Item ID="VIKING_SWORD">
+		<Name>Viking Sword</Name>
+		<PrefabInfoRef>ASSET_VIKING_SWORD</PrefabInfoRef>
+	</Item>
+
+</Database>

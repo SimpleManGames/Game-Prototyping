@@ -1,0 +1,21 @@
+<Database>
+	
+	<!-- Asset Bundle Info -->
+
+	<AssetBundleInfo ID="ASSET_BUNDLE_MAIN_CONTENT">
+		<Name>MainContent</Name>
+		<URL>StreamingAssets/AssetBundles/MainContent.unity3d</URL>
+	</AssetBundleInfo>
+
+
+	<AssetInfo ID="ASSET_PLAYER">
+		<AssetBundleInfoRef>ASSET_BUNDLE_MAIN_CONTENT</AssetBundleInfoRef>
+		<Path>Assets/Prefab/Player.prefab</Path>
+	</AssetInfo>
+
+	<AssetInfo ID="ASSET_VIKING_SWORD">
+		<AssetBundleInfoRef>ASSET_BUNDLE_MAIN_CONTENT</AssetBundleInfoRef>
+		<Path>Assets/Prefab/Items/Weapons/Viking Sword.prefab</Path>
+	</AssetInfo>
+
+</Database>

@@ -7,8 +7,5 @@ public sealed class Item : DatabaseEntry
     public string Name { get; set; }
 
     [XmlElement]
-    public string PrefabPath { get; set; }
-
-    [XmlElement]
-    public string IconPath { get; set; }
+    public DatabaseEntryRef<AssetInfo> PrefabInfoRef { get; set; }
 }

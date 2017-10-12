@@ -77,15 +77,17 @@ LightmapSettings:
     m_PVRDirectSampleCount: 32
     m_PVRSampleCount: 500
     m_PVRBounces: 2
-    m_PVRFiltering: 0
+    m_PVRFilterTypeDirect: 0
+    m_PVRFilterTypeIndirect: 0
+    m_PVRFilterTypeAO: 0
     m_PVRFilteringMode: 1
     m_PVRCulling: 1
     m_PVRFilteringGaussRadiusDirect: 1
     m_PVRFilteringGaussRadiusIndirect: 5
     m_PVRFilteringGaussRadiusAO: 2
-    m_PVRFilteringAtrousColorSigma: 1
-    m_PVRFilteringAtrousNormalSigma: 1
-    m_PVRFilteringAtrousPositionSigma: 1
+    m_PVRFilteringAtrousPositionSigmaDirect: 0.5
+    m_PVRFilteringAtrousPositionSigmaIndirect: 2
+    m_PVRFilteringAtrousPositionSigmaAO: 1
   m_LightingDataAsset: {fileID: 0}
   m_UseShadowmask: 1
 --- !u!196 &4
@@ -117,6 +119,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1994545747}
   - component: {fileID: 1994545748}
+  - component: {fileID: 1994545749}
   m_Layer: 0
   m_Name: _SCRIPTS_
   m_TagString: Untagged
@@ -153,3 +156,16 @@ MonoBehaviour:
     debugStateChanges: 1
   _player: {fileID: 0}
   _camera: {fileID: 0}
+  _resourceManager: {fileID: 0}
+--- !u!114 &1994545749
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1994545746}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0348b8a540f935546a3225aa0de5b7c5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ForceAssetBundlesInEditor: 1
