@@ -158,16 +158,14 @@ public class ResourceManager : MonoBehaviour
             string[] existingAssetBundlePaths = Directory.GetFiles(AssetBundlePath);
             foreach (string bundlePath in existingAssetBundlePaths)
             {
-                if (bundlePath.EndsWith(".unity3d"))
-                {
-                    Debug.Log("Deleting bundle: " + bundlePath);
-                    File.Delete(bundlePath);
-                }
+                Debug.Log("Deleting bundle: " + bundlePath);
+                File.Delete(bundlePath);
             }
         }
         else
             Directory.CreateDirectory(AssetBundlePath);
 
+        AssetDatabase.Refresh();
         AssetDatabase.SaveAssets();
     }
 
@@ -213,7 +211,7 @@ public class ResourceManager : MonoBehaviour
         foreach (AssetBundleInfo info in assetBundleInfos)
         {
             List<UnityEngine.Object> objectList;
-            if(!bundleObjects.TryGetValue(info.DatabaseID, out objectList))
+            if (!bundleObjects.TryGetValue(info.DatabaseID, out objectList))
             {
                 Debug.LogWarning("No objects for bundle: " + info.Name);
                 continue;

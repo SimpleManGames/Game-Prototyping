@@ -3,11 +3,19 @@
 	<Item ID="TEST_ITEM">
     	<Name>Test Item</Name>
     	<PrefabPath>NoPath</PrefabPath>
+    	<EquipPoint></EquipPoint>
 	</Item>
 
 	<Item ID="VIKING_SWORD">
 		<Name>Viking Sword</Name>
 		<PrefabInfoRef>ASSET_VIKING_SWORD</PrefabInfoRef>
+		<EquipPoint>RightHand</EquipPoint>
+	</Item>
+
+	<Item ID="SHIELD">
+		<Name>Shield</Name>
+		<PrefabInfoRef>ASSET_SHIELD</PrefabInfoRef>
+		<EquipPoint>LeftHand</EquipPoint>
 	</Item>
 
 </Database>

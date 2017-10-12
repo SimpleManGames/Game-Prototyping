@@ -1456,6 +1456,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1024
   targetables: []
+  equipPoints:
+  - {fileID: 593084742}
   debugTargets: 1
 --- !u!1001 &482973924
 Prefab:

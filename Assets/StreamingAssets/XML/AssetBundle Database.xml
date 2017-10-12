@@ -18,4 +18,9 @@
 		<Path>Assets/Prefab/Items/Weapons/Viking Sword.prefab</Path>
 	</AssetInfo>
 
+	<AssetInfo ID="ASSET_SHIELD">
+		<AssetBundleInfoRef>ASSET_BUNDLE_MAIN_CONTENT</AssetBundleInfoRef>
+		<Path>Assets/Prefab/Items/Armor/Shield.prefab</Path>
+	</AssetInfo>
+
 </Database>

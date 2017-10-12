@@ -42,6 +42,8 @@ public class Player : Agent
     }
     [Obsolete] private float halfVisionConeSize = 45f;
 
+    public List<Transform> equipPoints;
+
     [Header("Debug")]
     [SerializeField] private bool debugTargets;
 

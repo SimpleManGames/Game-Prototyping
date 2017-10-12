@@ -65,9 +65,10 @@ public class GameManager : Singleton<GameManager>
         if (Input.GetKeyDown(KeyCode.I))
         {
             Item item = Database.Instance.GetEntries<Item>().Where(i => i.DatabaseID.ToString() == "VIKING_SWORD").FirstOrDefault();
+            Transform equipTrans = Player.equipPoints.Where(i => i.name == item.EquipPoint).FirstOrDefault();
             ResourceManager.LoadAssetAsync<GameObject>(item.PrefabInfoRef.Entry, (prefab) =>
             {
-                Instantiate(prefab);
+                Instantiate(prefab, equipTrans);
             });
         }
 

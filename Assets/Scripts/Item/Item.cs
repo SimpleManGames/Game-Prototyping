@@ -8,4 +8,7 @@ public sealed class Item : DatabaseEntry
 
     [XmlElement]
     public DatabaseEntryRef<AssetInfo> PrefabInfoRef { get; set; }
+
+    [XmlElement]
+    public string EquipPoint { get; set; }
 }
