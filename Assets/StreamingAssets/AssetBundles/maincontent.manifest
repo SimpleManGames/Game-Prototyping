@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 3622297089
+CRC: 630338149
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 991e77850aa937868c5b76a0813fe457
+    Hash: 2ca8810e2ca3f8103c644e4a939f8a52
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 203cb03f31600e8cc3e8316e5fc77ae2
+    Hash: 07b1fc930e0570ab6f6198e5f44b900e
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -16,6 +16,8 @@ ClassTypes:
 - Class: 21
   Script: {instanceID: 0}
 - Class: 23
+  Script: {instanceID: 0}
+- Class: 28
   Script: {instanceID: 0}
 - Class: 33
   Script: {instanceID: 0}
@@ -45,8 +47,11 @@ ClassTypes:
   Script: {instanceID: 0}
 - Class: 137
   Script: {instanceID: 0}
+- Class: 213
+  Script: {instanceID: 0}
 Assets:
 - Assets/Prefab/Items/Weapons/Viking Sword.prefab
 - Assets/Prefab/Player.prefab
+- Assets/Art/Icons/Items/sword.png
 - Assets/Prefab/Items/Armor/Shield.prefab
 Dependencies: []

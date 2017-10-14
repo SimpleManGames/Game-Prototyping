@@ -1,21 +1,33 @@
 <Database>
 
-	<Item ID="TEST_ITEM">
+	<!-- Item Format
+		
+	<ItemInfo ID="">
+		<Name></Name>
+		<Prefab></Prefab>
+		<Icon></Icon>
+		<ItemType></ItemType>
+	</ItemInfo>
+	
+	-->
+
+	<ItemInfo ID="TEST_ITEM">
     	<Name>Test Item</Name>
     	<PrefabPath>NoPath</PrefabPath>
-    	<EquipPoint></EquipPoint>
-	</Item>
+	</ItemInfo>
 
-	<Item ID="VIKING_SWORD">
+	<ItemInfo ID="VIKING_SWORD">
 		<Name>Viking Sword</Name>
-		<PrefabInfoRef>ASSET_VIKING_SWORD</PrefabInfoRef>
-		<EquipPoint>RightHand</EquipPoint>
-	</Item>
+		<Prefab>ASSET_VIKING_SWORD</Prefab>
+		<Icon>ASSET_ICON_VIKING_SWORD</Icon>
+		<ItemType>Weapon</ItemType>
+	</ItemInfo>
 
-	<Item ID="SHIELD">
+	<ItemInfo ID="SHIELD">
 		<Name>Shield</Name>
-		<PrefabInfoRef>ASSET_SHIELD</PrefabInfoRef>
-		<EquipPoint>LeftHand</EquipPoint>
-	</Item>
+		<Prefab>ASSET_SHIELD</Prefab>
+		<Icon></Icon>
+		<ItemType></ItemType>
+	</ItemInfo>
 
 </Database>

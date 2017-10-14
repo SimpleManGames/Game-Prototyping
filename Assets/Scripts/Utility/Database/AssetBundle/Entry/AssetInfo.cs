@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Xml.Serialization;
-using UnityEngine;
+﻿using System.Xml.Serialization;
 
 [XmlRoot("AssetInfo")]
 public sealed class AssetInfo : DatabaseEntry

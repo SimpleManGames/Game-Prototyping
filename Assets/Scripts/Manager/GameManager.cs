@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameManager : Singleton<GameManager>
 {
@@ -36,6 +37,8 @@ public class GameManager : Singleton<GameManager>
 
     public event Action OnFinishedLoading;
 
+    public Image spriteToChange;
+
     public override void Awake()
     {
         base.Awake();
@@ -64,12 +67,9 @@ public class GameManager : Singleton<GameManager>
 
         if (Input.GetKeyDown(KeyCode.I))
         {
-            Item item = Database.Instance.GetEntries<Item>().Where(i => i.DatabaseID.ToString() == "VIKING_SWORD").FirstOrDefault();
-            Transform equipTrans = Player.equipPoints.Where(i => i.name == item.EquipPoint).FirstOrDefault();
-            ResourceManager.LoadAssetAsync<GameObject>(item.PrefabInfoRef.Entry, (prefab) =>
-            {
-                Instantiate(prefab, equipTrans);
-            });
+            ItemInfo item = Database.Instance.GetEntries<ItemInfo>().Where(i => i.DatabaseID.ToString() == "VIKING_SWORD").FirstOrDefault();
+            ResourceManager.LoadAssetAsync<GameObject>(item.Prefab.Entry, (prefab) => { Instantiate(prefab); });
+            ResourceManager.LoadAssetAsync<Sprite>(item.Icon.Entry, (icon) => { spriteToChange.sprite = icon; });
         }
 
         _stateMachine?.CurrentState?.Update();

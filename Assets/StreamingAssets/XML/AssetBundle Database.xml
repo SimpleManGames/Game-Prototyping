@@ -7,6 +7,7 @@
 		<URL>StreamingAssets/AssetBundles/MainContent.unity3d</URL>
 	</AssetBundleInfo>
 
+	<!-- Asset Info -->
 
 	<AssetInfo ID="ASSET_PLAYER">
 		<AssetBundleInfoRef>ASSET_BUNDLE_MAIN_CONTENT</AssetBundleInfoRef>
@@ -21,6 +22,11 @@
 	<AssetInfo ID="ASSET_SHIELD">
 		<AssetBundleInfoRef>ASSET_BUNDLE_MAIN_CONTENT</AssetBundleInfoRef>
 		<Path>Assets/Prefab/Items/Armor/Shield.prefab</Path>
+	</AssetInfo>
+
+	<AssetInfo ID="ASSET_ICON_VIKING_SWORD">
+		<AssetBundleInfoRef>ASSET_BUNDLE_MAIN_CONTENT</AssetBundleInfoRef>
+		<Path>Assets/Art/Icons/Items/sword.png</Path>
 	</AssetInfo>
 
 </Database>
