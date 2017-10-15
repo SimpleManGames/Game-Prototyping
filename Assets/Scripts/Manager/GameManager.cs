@@ -56,10 +56,6 @@ public class GameManager : Singleton<GameManager>
         SceneManager.sceneLoaded += LevelChange;
     }
 
-    private void Start()
-    {
-    }
-
     public void Update()
     {
         if (Input.GetKeyDown(KeyCode.R))

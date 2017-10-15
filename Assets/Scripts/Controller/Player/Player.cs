@@ -265,7 +265,7 @@ public class Player : Agent
 
     public bool AcquiringGround()
     {
-        return controller.CurrentGround.IsGrounded(false, 0.01f);
+        return controller.CurrentGround.IsGrounded(false, 0.5f);
     }
 
     public Vector3 LocalMovement()

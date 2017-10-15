@@ -3,8 +3,10 @@
 public enum ItemType
 {
     [XmlEnum] Weapon,
-    [XmlEnum] Armor,
-    [XmlEnum] Usable
+    [XmlEnum] Armor_Head,
+    [XmlEnum] Armor_Body,
+    [XmlEnum] Armor_Legs,
+    [XmlEnum] Armor_Arms,
 }
 
 [XmlRoot]
