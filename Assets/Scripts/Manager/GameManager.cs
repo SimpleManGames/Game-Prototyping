@@ -1,92 +1,98 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
+using Core.XmlDatabase;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class GameManager : Singleton<GameManager>
+namespace Core.Managers
 {
-    [SerializeField]
-    private StateMachine _stateMachine;
-    public StateMachine StateMachine
+    public class GameManager : Singleton<GameManager>
     {
-        get { return _stateMachine; }
-    }
-
-    [SerializeField, ReadOnly]
-    private Player _player;
-    public Player Player
-    {
-        get { return _player; }
-    }
-
-    [SerializeField, ReadOnly]
-    private Camera _camera;
-    public Camera Camera
-    {
-        get { return _camera; }
-    }
-
-    [SerializeField, ReadOnly]
-    private ResourceManager _resourceManager;
-    public ResourceManager ResourceManager
-    {
-        get { return _resourceManager; }
-    }
-
-    public event Action OnFinishedLoading;
-
-    public Image spriteToChange;
-
-    public override void Awake()
-    {
-        base.Awake();
-        _player = FindObjectOfType<Player>();
-        _camera = FindObjectOfType<Camera>();
-        _resourceManager = GetComponent<ResourceManager>();
-        _stateMachine = _stateMachine ?? new StateMachine();
-
-        OnFinishedLoading += () => Debug.Log("Finished");
-
-        Debug.Log(Application.streamingAssetsPath);
-        Database.Instance.ReadFiles(Application.streamingAssetsPath + "/XML/");
-        ResourceManager.LoadBundlesAsync(() => OnFinishedLoading?.Invoke());
-
-        SceneManager.sceneLoaded += LevelChange;
-    }
-
-    public void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.R))
-            ResetPlayer();
-
-        if (Input.GetKeyDown(KeyCode.I))
+        [SerializeField]
+        private StateMachine _stateMachine;
+        public StateMachine StateMachine
         {
-            ItemInfo item = Database.Instance.GetEntries<ItemInfo>().Where(i => i.DatabaseID.ToString() == "VIKING_SWORD").FirstOrDefault();
-            ResourceManager.LoadAssetAsync<GameObject>(item.Prefab.Entry, (prefab) => { Instantiate(prefab); });
-            ResourceManager.LoadAssetAsync<Sprite>(item.Icon.Entry, (icon) => { spriteToChange.sprite = icon; });
+            get { return _stateMachine; }
         }
 
-        _stateMachine?.CurrentState?.Update();
-    }
+        [SerializeField, ReadOnly]
+        private Player _player;
+        public Player Player
+        {
+            get { return _player; }
+        }
 
-    public void ResetPlayer()
-    {
-        Player.transform.position = Vector3.zero;
-        Player.moveDirection = Vector3.zero;
-    }
+        [SerializeField, ReadOnly]
+        private Camera _camera;
+        public Camera Camera
+        {
+            get { return _camera; }
+        }
 
-    private void LevelChange(Scene scene, LoadSceneMode mode)
-    {
-        _camera = null;
-        _camera = FindObjectOfType<Camera>();
+        [SerializeField, ReadOnly]
+        private ResourceManager _resourceManager;
+        public ResourceManager ResourceManager
+        {
+            get { return _resourceManager; }
+        }
 
-        _player = _player ?? FindObjectOfType<Player>();
-    }
+        public event Action OnFinishedLoading;
 
-    public void Quit()
-    {
-        Application.Quit();
+        public string partString = "PART_AES707";
+
+        public override void Awake()
+        {
+            base.Awake();
+            _player = FindObjectOfType<Player>();
+            _camera = FindObjectOfType<Camera>();
+            _resourceManager = GetComponent<ResourceManager>();
+            _stateMachine = _stateMachine ?? new StateMachine();
+
+            OnFinishedLoading += () => Debug.Log("Finished");
+
+            Debug.Log(Application.streamingAssetsPath);
+            Database.Instance.ReadFiles(Application.streamingAssetsPath + "/XML/");
+            ResourceManager.LoadBundlesAsync(() => OnFinishedLoading?.Invoke());
+
+            SceneManager.sceneLoaded += LevelChange;
+        }
+
+        public void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.R))
+                ResetPlayer();
+
+            if (Input.GetKeyDown(KeyCode.I))
+            {
+                PartInfo part = Database.Instance.GetEntries<PartInfo>().Where(i => i.DatabaseID.ToString() == partString).FirstOrDefault();
+
+                if (part == null)
+                    return;
+
+                ResourceManager.LoadAssetAsync<GameObject>(part.Prefab.Entry, (prefab) => { Instantiate(prefab); });
+            }
+
+            _stateMachine?.CurrentState?.Update();
+        }
+
+        public void ResetPlayer()
+        {
+            Player.transform.position = Vector3.zero;
+            Player.moveDirection = Vector3.zero;
+        }
+
+        private void LevelChange(Scene scene, LoadSceneMode mode)
+        {
+            _camera = null;
+            _camera = FindObjectOfType<Camera>();
+
+            _player = _player ?? FindObjectOfType<Player>();
+        }
+
+        public void Quit()
+        {
+            Application.Quit();
+        }
     }
 }

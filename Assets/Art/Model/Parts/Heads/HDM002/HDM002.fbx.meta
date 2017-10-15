@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 1fe523bc8b7e8d9418b464a498f96399
-timeCreated: 1508027057
+timeCreated: 1508036537
 licenseType: Pro
 ModelImporter:
   serializedVersion: 21
@@ -85,6 +85,7 @@ ModelImporter:
     100154: toe.R_end
     100156: upper_arm.L
     100158: upper_arm.R
+    100160: metarig
     400000: /Users/andy/Blender/Exteel/Animations Exported/GFA_Head/Ske.000
     400002: chest
     400004: f_index.01.L
@@ -165,9 +166,11 @@ ModelImporter:
     400154: toe.R_end
     400156: upper_arm.L
     400158: upper_arm.R
+    400160: metarig
     2300000: /Users/andy/Blender/Exteel/Animations Exported/GFA_Head/Ske.000
     3300000: /Users/andy/Blender/Exteel/Animations Exported/GFA_Head/Ske.000
     4300000: /Users/andy/Blender/Exteel/Animations Exported/GFA_Head/Ske.000
+    9500000: //RootNode
   materials:
     importMaterials: 1
     materialName: 0
@@ -184,7 +187,7 @@ ModelImporter:
     animationImportWarnings: 
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
-    animationCompression: 1
+    animationCompression: 3
     animationRotationError: 0.5
     animationPositionError: 0.5
     animationScaleError: 0.5
@@ -234,10 +237,10 @@ ModelImporter:
     rootMotionBoneName: 
     rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
     hasTranslationDoF: 0
-    hasExtraRoot: 0
+    hasExtraRoot: 1
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  animationType: 0
+  animationType: 2
   humanoidOversampling: 1
   additionalBone: 0
   userData: 

@@ -7,11 +7,11 @@
 		<URL>StreamingAssets/AssetBundles/MainContent.unity3d</URL>
 	</AssetBundleInfo>
 
-	<!-- Asset Info -->
+	<!-- Item Info -->
 
 	<AssetInfo ID="ASSET_PLAYER">
 		<AssetBundleInfoRef>ASSET_BUNDLE_MAIN_CONTENT</AssetBundleInfoRef>
-		<Path>Assets/Prefab/Player.prefab</Path>
+		<Path>Assets/Prefab/Controller/Player.prefab</Path>
 	</AssetInfo>
 
 	<AssetInfo ID="ASSET_VIKING_SWORD">
@@ -19,14 +19,51 @@
 		<Path>Assets/Prefab/Items/Weapons/Viking Sword.prefab</Path>
 	</AssetInfo>
 
+	<AssetInfo ID="ASSET_ICON_VIKING_SWORD">
+		<AssetBundleInfoRef>ASSET_BUNDLE_MAIN_CONTENT</AssetBundleInfoRef>
+		<Path>Assets/Art/Icons/Items/sword.png</Path>
+	</AssetInfo>
+
 	<AssetInfo ID="ASSET_SHIELD">
 		<AssetBundleInfoRef>ASSET_BUNDLE_MAIN_CONTENT</AssetBundleInfoRef>
 		<Path>Assets/Prefab/Items/Armor/Shield.prefab</Path>
 	</AssetInfo>
 
-	<AssetInfo ID="ASSET_ICON_VIKING_SWORD">
+	<!-- Part Infos -->
+
+	<AssetInfo ID="ASSET_AES104">
 		<AssetBundleInfoRef>ASSET_BUNDLE_MAIN_CONTENT</AssetBundleInfoRef>
-		<Path>Assets/Art/Icons/Items/sword.png</Path>
+		<Path>Assets/Prefab/Parts/Arms/AES104.prefab</Path>
+	</AssetInfo>
+
+	<AssetInfo ID="ASSET_AES707">
+		<AssetBundleInfoRef>ASSET_BUNDLE_MAIN_CONTENT</AssetBundleInfoRef>
+		<Path>Assets/Prefab/Parts/Arms/AES707.prefab</Path>
+	</AssetInfo>
+
+	<AssetInfo ID="ASSET_PBS000">
+		<AssetBundleInfoRef>ASSET_BUNDLE_MAIN_CONTENT</AssetBundleInfoRef>
+		<Path>Assets/Prefab/Parts/Boosters/PBS000.prefab</Path>
+	</AssetInfo>
+
+	<AssetInfo ID="ASSET_CES301">
+		<AssetBundleInfoRef>ASSET_BUNDLE_MAIN_CONTENT</AssetBundleInfoRef>
+		<Path>Assets/Prefab/Parts/Cores/CES301.prefab</Path>
+	</AssetInfo>
+
+	<AssetInfo ID="ASSET_HDM002">
+		<AssetBundleInfoRef>ASSET_BUNDLE_MAIN_CONTENT</AssetBundleInfoRef>
+		<Path>Assets/Prefab/Parts/Heads/HDM002.prefab</Path>
+	</AssetInfo>
+
+	<AssetInfo ID="ASSET_HDS003">
+		<AssetBundleInfoRef>ASSET_BUNDLE_MAIN_CONTENT</AssetBundleInfoRef>
+		<Path>Assets/Prefab/Parts/Heads/HDS003.prefab</Path>
+	</AssetInfo>
+
+	<AssetInfo ID="ASSET_LTN411">
+		<AssetBundleInfoRef>ASSET_BUNDLE_MAIN_CONTENT</AssetBundleInfoRef>
+		<Path>Assets/Prefab/Parts/Legs/LTN411.prefab</Path>
 	</AssetInfo>
 
 </Database>

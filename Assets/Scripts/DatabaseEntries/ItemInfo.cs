@@ -1,12 +1,9 @@
-﻿using System.Xml.Serialization;
+﻿using Core.XmlDatabase;
+using System.Xml.Serialization;
 
 public enum ItemType
 {
     [XmlEnum] Weapon,
-    [XmlEnum] Armor_Head,
-    [XmlEnum] Armor_Body,
-    [XmlEnum] Armor_Legs,
-    [XmlEnum] Armor_Arms,
 }
 
 [XmlRoot]

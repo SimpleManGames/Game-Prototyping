@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 630338149
+CRC: 2337102167
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 2ca8810e2ca3f8103c644e4a939f8a52
+    Hash: 1fb71a6f669a91cc608ecb9214cea4a6
   TypeTreeHash:
     serializedVersion: 2
     Hash: 07b1fc930e0570ab6f6198e5f44b900e
@@ -51,7 +51,14 @@ ClassTypes:
   Script: {instanceID: 0}
 Assets:
 - Assets/Prefab/Items/Weapons/Viking Sword.prefab
-- Assets/Prefab/Player.prefab
+- Assets/Prefab/Parts/Cores/CES301.prefab
+- Assets/Prefab/Parts/Arms/AES707.prefab
+- Assets/Prefab/Parts/Boosters/PBS000.prefab
+- Assets/Prefab/Parts/Legs/LTN411.prefab
+- Assets/Prefab/Controller/Player.prefab
+- Assets/Prefab/Parts/Arms/AES104.prefab
+- Assets/Prefab/Parts/Heads/HDM002.prefab
 - Assets/Art/Icons/Items/sword.png
 - Assets/Prefab/Items/Armor/Shield.prefab
+- Assets/Prefab/Parts/Heads/HDS003.prefab
 Dependencies: []

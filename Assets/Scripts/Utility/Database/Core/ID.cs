@@ -1,79 +1,83 @@
 ﻿using System.Collections.Generic;
 
-public class ID {
-
-    static Dictionary<string, ID> idTable = new Dictionary<string, ID>();
-
-    private static ID noIDInternal;
-    public static ID NoID
+namespace Core.XmlDatabase
+{
+    public class ID
     {
-        get
+
+        static Dictionary<string, ID> idTable = new Dictionary<string, ID>();
+
+        private static ID noIDInternal;
+        public static ID NoID
         {
-            if (noIDInternal == null)
-                noIDInternal = CreateID("");
+            get
+            {
+                if (noIDInternal == null)
+                    noIDInternal = CreateID("");
 
-            return noIDInternal;
-        }
-    }
-
-    private string str = string.Empty;
-
-    public ID()
-    {
-        str = string.Empty;
-    }
-
-    public ID(string idString)
-    {
-        str = idString;
-    }
-
-    public static ID CreateID(string idString)
-    {
-        ID id;
-        if (!idTable.TryGetValue(idString, out id))
-        {
-            id = new ID(idString);
-            idTable[idString] = id;
+                return noIDInternal;
+            }
         }
 
-        return id;
-    }
+        private string str = string.Empty;
 
-    public static ID GetID(string idString)
-    {
-        ID id;
-        if (idTable.TryGetValue(idString, out id))
+        public ID()
+        {
+            str = string.Empty;
+        }
+
+        public ID(string idString)
+        {
+            str = idString;
+        }
+
+        public static ID CreateID(string idString)
+        {
+            ID id;
+            if (!idTable.TryGetValue(idString, out id))
+            {
+                id = new ID(idString);
+                idTable[idString] = id;
+            }
+
             return id;
+        }
 
-        return NoID;
-    }
+        public static ID GetID(string idString)
+        {
+            ID id;
+            if (idTable.TryGetValue(idString, out id))
+                return id;
 
-    public static void ClearIDs()
-    {
-        idTable.Clear();
-    }
+            return NoID;
+        }
 
-    public override string ToString()
-    {
-        return str;
-    }
+        public static void ClearIDs()
+        {
+            idTable.Clear();
+        }
 
-    public override bool Equals(object obj)
-    {
-        if (obj == null)
-            return false;
+        public override string ToString()
+        {
+            return str;
+        }
 
-        return ReferenceEquals(this, obj);
-    }
+        public override bool Equals(object obj)
+        {
+            if (obj == null)
+                return false;
 
-    public override int GetHashCode()
-    {
-        return str.GetHashCode();
-    }
+            return ReferenceEquals(this, obj);
+        }
 
-    public static bool IsNullOrNoID(ID id)
-    {
-        return id == null || id == NoID;
+        public override int GetHashCode()
+        {
+            return str.GetHashCode();
+        }
+
+        public static bool IsNullOrNoID(ID id)
+        {
+            return id == null || id == NoID;
+        }
     }
 }

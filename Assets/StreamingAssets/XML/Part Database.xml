@@ -1,0 +1,45 @@
+<Database>
+
+	<PartInfo ID="PART_AES104">
+    	<Name>AES104</Name>
+    	<Prefab>ASSET_AES104</Prefab>
+    	<Type>Arms</Type>
+	</PartInfo>
+
+	<PartInfo ID="PART_AES707">
+    	<Name>AES707</Name>
+    	<Prefab>ASSET_AES707</Prefab>
+    	<Type>Arms</Type>
+	</PartInfo>
+
+	<PartInfo ID="PART_PBS000">
+    	<Name>PBS000</Name>
+    	<Prefab>ASSET_PBS000</Prefab>
+    	<Type>Booster</Type>
+	</PartInfo>
+
+	<PartInfo ID="PART_CES301">
+    	<Name>CES301</Name>
+    	<Prefab>ASSET_CES301</Prefab>
+    	<Type>Core</Type>
+	</PartInfo>
+
+	<PartInfo ID="PART_HDM002">
+    	<Name>HDM002</Name>
+    	<Prefab>ASSET_HDM002</Prefab>
+    	<Type>Head</Type>
+	</PartInfo>
+
+	<PartInfo ID="PART_HDS003">
+    	<Name>HDS003</Name>
+    	<Prefab>ASSET_HDS003</Prefab>
+    	<Type>Head</Type>
+	</PartInfo>
+
+	<PartInfo ID="PART_LTN411">
+    	<Name>LTN441</Name>
+    	<Prefab>ASSET_LTN411</Prefab>
+    	<Type>Legs</Type>
+	</PartInfo>
+
+</Database>

@@ -1,33 +1,36 @@
 ﻿using System.ComponentModel;
 using System.Xml.Serialization;
 
-public abstract class DatabaseEntry
+namespace Core.XmlDatabase
 {
-    [XmlIgnore]
-    public ID DatabaseID { get; private set; }
-
-    [XmlIgnore]
-    public Database Database { get; private set; }
-
-    [XmlAttribute("ID"), EditorBrowsable(EditorBrowsableState.Never)]
-    public string _DatabaseIDSurrogate
+    public abstract class DatabaseEntry
     {
-        get
+        [XmlIgnore]
+        public ID DatabaseID { get; private set; }
+
+        [XmlIgnore]
+        public Database Database { get; private set; }
+
+        [XmlAttribute("ID"), EditorBrowsable(EditorBrowsableState.Never)]
+        public string _DatabaseIDSurrogate
         {
-            return ID.IsNullOrNoID(DatabaseID) ? ID.NoID.ToString() : DatabaseID.ToString();
+            get
+            {
+                return ID.IsNullOrNoID(DatabaseID) ? ID.NoID.ToString() : DatabaseID.ToString();
+            }
+
+            set
+            {
+                DatabaseID = ID.CreateID(value);
+            }
         }
 
-        set
+        public void PostLoad(Database db)
         {
-            DatabaseID = ID.CreateID(value);
+            Database = db;
+            OnPostLoad();
         }
-    }
 
-    public void PostLoad(Database db)
-    {
-        Database = db;
-        OnPostLoad();
+        protected virtual void OnPostLoad() { }
     }
-
-    protected virtual void OnPostLoad() { }
-} 
+}

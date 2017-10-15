@@ -11,11 +11,6 @@
 	
 	-->
 
-	<ItemInfo ID="TEST_ITEM">
-    	<Name>Test Item</Name>
-    	<PrefabPath>NoPath</PrefabPath>
-	</ItemInfo>
-
 	<ItemInfo ID="VIKING_SWORD">
 		<Name>Viking Sword</Name>
 		<Prefab>ASSET_VIKING_SWORD</Prefab>

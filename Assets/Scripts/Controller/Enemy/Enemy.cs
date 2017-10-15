@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Core.Managers;
+using UnityEngine;
 
 [SelectionBase, RequireComponent(typeof(Controller))]
 public class Enemy : Agent, ITargetable

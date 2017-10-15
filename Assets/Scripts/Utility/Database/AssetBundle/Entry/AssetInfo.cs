@@ -1,4 +1,5 @@
-﻿using System.Xml.Serialization;
+﻿using Core.XmlDatabase;
+using System.Xml.Serialization;
 
 [XmlRoot("AssetInfo")]
 public sealed class AssetInfo : DatabaseEntry

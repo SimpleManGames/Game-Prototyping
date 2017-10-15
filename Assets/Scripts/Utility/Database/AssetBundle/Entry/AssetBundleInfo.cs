@@ -1,7 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using Core.XmlDatabase;
 using System.Xml.Serialization;
-using UnityEngine;
 
 [XmlRoot("AssetBundleInfo")]
 public sealed class AssetBundleInfo : DatabaseEntry

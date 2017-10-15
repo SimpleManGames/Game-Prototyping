@@ -5,46 +5,49 @@ using System.Xml;
 using System.Xml.Serialization;
 using UnityEngine;
 
-public delegate DatabaseEntry DatabaseEntryFactoryDelegate(XmlReader reader);
-
-public class DatabaseEntryFactory
+namespace Core.XmlDatabase
 {
-    private static Dictionary<string, DatabaseEntryFactoryDelegate> typeMap = CreateTypeMap();
+    public delegate DatabaseEntry DatabaseEntryFactoryDelegate(XmlReader reader);
 
-    public static Dictionary<string, DatabaseEntryFactoryDelegate> CreateTypeMap()
+    public class DatabaseEntryFactory
     {
-        Dictionary<string, DatabaseEntryFactoryDelegate> map = new Dictionary<string, DatabaseEntryFactoryDelegate>();
+        private static Dictionary<string, DatabaseEntryFactoryDelegate> typeMap = CreateTypeMap();
 
-        Type baseType = typeof(DatabaseEntry);
-
-        Assembly currentAssembly = Assembly.GetExecutingAssembly();
-
-        foreach (Type type in currentAssembly.GetTypes())
+        public static Dictionary<string, DatabaseEntryFactoryDelegate> CreateTypeMap()
         {
-            if (!type.IsClass || type.IsAbstract || !type.IsSubclassOf(baseType))
-                continue;
+            Dictionary<string, DatabaseEntryFactoryDelegate> map = new Dictionary<string, DatabaseEntryFactoryDelegate>();
 
-            Type tempType = type;
-            map.Add(type.ToString(), (reader) =>
+            Type baseType = typeof(DatabaseEntry);
+
+            Assembly currentAssembly = Assembly.GetExecutingAssembly();
+
+            foreach (Type type in currentAssembly.GetTypes())
             {
-                XmlSerializer serializer = new XmlSerializer(tempType);
-                return (DatabaseEntry)serializer.Deserialize(reader);
-            });
+                if (!type.IsClass || type.IsAbstract || !type.IsSubclassOf(baseType))
+                    continue;
+
+                Type tempType = type;
+                map.Add(type.ToString(), (reader) =>
+                {
+                    XmlSerializer serializer = new XmlSerializer(tempType);
+                    return (DatabaseEntry)serializer.Deserialize(reader);
+                });
+            }
+
+            return map;
         }
 
-        return map;
-    }
+        public static DatabaseEntry Create(string entryTypeName, XmlReader reader)
+        {
+            if (entryTypeName == null)
+                return null;
 
-    public static DatabaseEntry Create(string entryTypeName, XmlReader reader)
-    {
-        if (entryTypeName == null)
+            DatabaseEntryFactoryDelegate del;
+            if (typeMap.TryGetValue(entryTypeName, out del))
+                return del(reader);
+
+            Debug.LogError("Unknown Database Entry type: " + entryTypeName);
             return null;
-
-        DatabaseEntryFactoryDelegate del;
-        if (typeMap.TryGetValue(entryTypeName, out del))
-            return del(reader);
-
-        Debug.LogError("Unknown Database Entry type: " + entryTypeName);
-        return null;
+        }
     }
 }
