@@ -1349,6 +1349,7 @@ GameObject:
   - component: {fileID: 453118737}
   - component: {fileID: 453118736}
   - component: {fileID: 453118735}
+  - component: {fileID: 453118738}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -1462,6 +1463,18 @@ MonoBehaviour:
     m_Bits: 1024
   targetables: []
   debugTargets: 1
+--- !u!114 &453118738
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 453118734}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 295d7313087966545842700c2353e54f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mechObject: {fileID: 0}
 --- !u!1001 &482973924
 Prefab:
   m_ObjectHideFlags: 0

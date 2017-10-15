@@ -34,7 +34,7 @@ public class GameStateLoader : MonoBehaviour
 
     public void LoadScene(string scene)
     {
-        SceneManager.LoadScene(scene);
+        GameManager.Instance.LoadScene(scene);
     }
 
     public void Quit()

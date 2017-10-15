@@ -3,7 +3,7 @@ using System.Linq;
 using Core.XmlDatabase;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
+using System.Collections.Generic;
 
 namespace Core.Managers
 {
@@ -37,9 +37,11 @@ namespace Core.Managers
             get { return _resourceManager; }
         }
 
+        [SerializeField]
+        private GameObject _pauseUI;
+        public GameObject PauseUI { get { return _pauseUI; } }
+        
         public event Action OnFinishedLoading;
-
-        public string partString = "PART_AES707";
 
         public override void Awake()
         {
@@ -63,16 +65,6 @@ namespace Core.Managers
             if (Input.GetKeyDown(KeyCode.R))
                 ResetPlayer();
 
-            if (Input.GetKeyDown(KeyCode.I))
-            {
-                PartInfo part = Database.Instance.GetEntries<PartInfo>().Where(i => i.DatabaseID.ToString() == partString).FirstOrDefault();
-
-                if (part == null)
-                    return;
-
-                ResourceManager.LoadAssetAsync<GameObject>(part.Prefab.Entry, (prefab) => { Instantiate(prefab); });
-            }
-
             _stateMachine?.CurrentState?.Update();
         }
 
@@ -80,6 +72,11 @@ namespace Core.Managers
         {
             Player.transform.position = Vector3.zero;
             Player.moveDirection = Vector3.zero;
+        }
+
+        public void LoadScene(string scene)
+        {
+            SceneManager.LoadScene(scene);
         }
 
         private void LevelChange(Scene scene, LoadSceneMode mode)

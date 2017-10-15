@@ -76,20 +76,8 @@ public class Player : Agent
             RotateTransform();
 
         UpdateAnimationValues();
-
-        //DetectTargetables();
-
+        
         CheckTargetRadius();
-    }
-
-    private void OnTriggerStay(Collider other)
-    {
-        int mask = 1 << targetableLayer;
-        if (other.gameObject.layer == controller.walkable)
-        {
-            Debug.Log("Hit mask");
-            return;
-        }
     }
 
     private void HandleMovement()

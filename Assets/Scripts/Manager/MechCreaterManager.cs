@@ -1,5 +1,6 @@
 ﻿using Core.Managers;
 using Core.XmlDatabase;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,6 +12,7 @@ public class MechCreaterManager : Singleton<MechCreaterManager>
     private Canvas UI;
     private GameObject demoMech;
     private PartInfo[] parts;
+    public List<PartInfo> selectedParts;
 
     public override void Awake()
     {
@@ -48,6 +50,7 @@ public class MechCreaterManager : Singleton<MechCreaterManager>
                 if (value)
                 {
                     GameManager.Instance.ResourceManager.LoadAssetAsync<GameObject>(part.Prefab.Entry, (prefab) => { Instantiate(prefab, demoMech.transform); });
+                    selectedParts.Add(part);
                 }
                 else
                 {
@@ -56,6 +59,7 @@ public class MechCreaterManager : Singleton<MechCreaterManager>
                     if (partToBeDeleted == null)
                         return;
 
+                    selectedParts.Remove(part);
                     Destroy(partToBeDeleted);
                 }
             });
