@@ -1,16 +1,19 @@
 ﻿using UnityEngine;
 using DarkRift;
+using static Core.Helper.Hash;
 
 namespace Core.Network.Login
 {
     public class LoginManager : MonoBehaviour
     {
+        public static HashType hashType = HashType.SHA256;
+
         public static void Login(string userName, string password)
         {
             using (DarkRiftWriter writer = new DarkRiftWriter())
             {
                 writer.Write(userName);
-                writer.Write(password);
+                writer.Write(HashHelper.ReturnHash(password, hashType));
                 SendToServer(NT.LoginT, NT.LoginS.loginUser, writer);
             }
         }
@@ -20,7 +23,7 @@ namespace Core.Network.Login
             using (DarkRiftWriter writer = new DarkRiftWriter())
             {
                 writer.Write(userName);
-                writer.Write(password);
+                writer.Write(HashHelper.ReturnHash(password, hashType));
                 SendToServer(NT.LoginT, NT.LoginS.addUser, writer);
             }
         }
