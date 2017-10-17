@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using DarkRift;
+﻿using DarkRift;
+using UnityEngine;
 using static Core.Helper.Hash;
 
 namespace Core.Network.Login
@@ -9,7 +9,7 @@ namespace Core.Network.Login
         public static int UserID { get; private set; }
         public static bool IsLoggedIn { get; private set; }
 
-        public delegate void SuccessfulLoginEventHandler(int userID, bool hasChar);
+        public delegate void SuccessfulLoginEventHandler(int userID);
         public delegate void FailedLoginEventHandler(int reason);
         public delegate void SuccessfulAddUserEventHandler();
         public delegate void FailedAddUserEventHandler();
@@ -69,16 +69,26 @@ namespace Core.Network.Login
             {
                 if (subject == NT.LoginS.loginUserSuccess)
                 {
-                    bool hasChar;
                     DarkRiftReader reader = (DarkRiftReader)data;
 
-                    hasChar = reader.ReadBoolean();
                     UserID = reader.ReadInt32();
 
                     IsLoggedIn = true;
 
-                    OnSuccessfulLogin?.Invoke(UserID, hasChar);
+                    OnSuccessfulLogin?.Invoke(UserID);
                 }
+
+                if (subject == NT.LoginS.loginUserFailed)
+                {
+                    int reason = (int)data;
+                    OnFailedLogin?.Invoke(reason);
+                }
+
+                if (subject == NT.LoginS.addUserSuccess)
+                    OnSuccessfulAddUser?.Invoke();
+
+                if (subject == NT.LoginS.addUserFailed)
+                    OnFailedAddUser?.Invoke();
             }
         }
     }

@@ -1,4 +1,7 @@
-﻿using UnityEngine;
+﻿#if UNITY_EDITOR
+using UnityEditor;
+#endif
+using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -12,6 +15,17 @@ namespace Core.Network.Login
         public void Start()
         {
             LoginManager.OnSuccessfulLogin += ChangeToFirstLevel;
+            LoginManager.OnFailedLogin += LoginFailed;
+            LoginManager.OnSuccessfulAddUser += ButtonLogin;
+            LoginManager.OnFailedAddUser += ButtonQuit;
+        }
+
+        private void OnApplicationQuit()
+        {
+            LoginManager.OnSuccessfulLogin -= ChangeToFirstLevel;
+            LoginManager.OnFailedLogin -= LoginFailed;
+            LoginManager.OnSuccessfulAddUser -= ButtonLogin;
+            LoginManager.OnFailedAddUser -= ButtonQuit;
         }
 
         public void ButtonLogin()
@@ -27,11 +41,23 @@ namespace Core.Network.Login
         public void ButtonQuit()
         {
             Application.Quit();
+
+#if UNITY_EDITOR
+            EditorApplication.isPlaying = false;
+#endif
         }
 
-        private void ChangeToFirstLevel(int userID, bool hasChar)
+        private void ChangeToFirstLevel(int userID)
         {
             SceneManager.LoadScene("Menu");
+        }
+
+        private void LoginFailed(int reason)
+        {
+            if (reason == 0)
+                passwordInput.text = "";
+            else
+                ButtonQuit();
         }
     }
 }
