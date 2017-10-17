@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using DarkRift;
+﻿using DarkRift;
+using UnityEngine;
 
 public class NetworkManager : MonoBehaviour
 {

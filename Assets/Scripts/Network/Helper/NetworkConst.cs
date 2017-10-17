@@ -1,5 +1,4 @@
-﻿
-namespace Core.Network
+﻿namespace Core.Network
 {
     public class NT
     {
