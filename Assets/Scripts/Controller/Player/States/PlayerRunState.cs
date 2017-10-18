@@ -33,13 +33,7 @@ public class PlayerRunState : IState
         if (player.HandleFallState())
             return;
 
-        if (player.HandleTargetState())
-            return;
-
         if (player.HandleIdleState())
-            return;
-        
-        if (player.HandleRollState())
             return;
 
         Vector3 dirInputNor = player.input.Current.MoveInput.normalized;
