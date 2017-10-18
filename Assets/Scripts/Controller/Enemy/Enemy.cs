@@ -5,10 +5,7 @@ using UnityEngine;
 public class Enemy : Agent, ITargetable
 {
     Controller controller;
-
-    // DEBUG
-    System.Diagnostics.Stopwatch watch = new System.Diagnostics.Stopwatch();
-
+    
     [SerializeField]
     private float targetOffset;
     public float TargetOffset
@@ -26,6 +23,11 @@ public class Enemy : Agent, ITargetable
     {
         base.Start();
         controller = GetComponent<Controller>();
+    }
+
+    private void Update()
+    {
+        
     }
 
     public Vector3 TargetPosition()

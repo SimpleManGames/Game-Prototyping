@@ -36,8 +36,6 @@ public class PlayerInputController : MonoBehaviour
         bool neutral = rightStickInput == Vector2.zero;
         bool jumpInput = Input.GetButtonDown("Jump");
         bool runInput = Input.GetButton("Run");
-        bool targetInput = Input.GetButtonDown("Target") ? !Current.TargetInput : Current.TargetInput;
-        bool rollInput = Input.GetButtonDown("Roll");
 
         Current = new PlayerInput()
         {
@@ -47,8 +45,6 @@ public class PlayerInputController : MonoBehaviour
             RightStickNeutral = neutral,
             JumpInput = jumpInput,
             RunInput = runInput,
-            TargetInput = targetInput,
-            RollInput = rollInput
         };
     }
 }
@@ -64,7 +60,4 @@ public struct PlayerInput
     [HideInInspector]
     public bool JumpInput;
     public bool RunInput;
-    public bool TargetInput;
-    [HideInInspector]
-    public bool RollInput;
 }

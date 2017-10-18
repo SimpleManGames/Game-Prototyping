@@ -1,9 +1,7 @@
-﻿using System;
-using System.Linq;
-using Core.XmlDatabase;
+﻿using Core.XmlDatabase;
+using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using System.Collections.Generic;
 
 namespace Core.Managers
 {
