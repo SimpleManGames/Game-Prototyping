@@ -1,6 +1,7 @@
 ﻿using Core.Network.Const;
 using Core.Network.Login;
 using DarkRift;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Game.Managers
@@ -12,6 +13,8 @@ namespace Game.Managers
 
         public static event PlayerSavedOKEventHandler OnPlayerSavedOK;
         public static event PlayerLoadOKEventHandler OnPlayerLoadOK;
+
+        public static List<string> playerPart = new List<string>();
 
         public static void SavePlayer(string playername, byte[] bytes)
         {

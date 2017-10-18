@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace Game.Managers
@@ -45,6 +46,8 @@ namespace Game.Managers
                     selectedParts.Add(part);
                 }
             }
+
+            PlayerManager.OnPlayerLoadOK -= LoadPlayer;
         }
 
         public void Start()
@@ -117,10 +120,9 @@ namespace Game.Managers
             return selectedParts.Select(p => p.Name).SelectMany(s => Encoding.ASCII.GetBytes(s)).ToArray();
         }
 
-        [Obsolete]
-        private List<string> GetPartsFromByteArray(byte[] bytes)
+        public void DoneButtonAction()
         {
-            return Encoding.ASCII.GetString(bytes, 0, bytes.Length - 1).Split(new string[] { "\r\n", "\r", "\n" }, StringSplitOptions.None).ToList();
+            SceneManager.LoadScene("Menu");
         }
     }
 }
