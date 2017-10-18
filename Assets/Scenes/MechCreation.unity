@@ -3049,6 +3049,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1561800698}
   - component: {fileID: 1561800697}
+  - component: {fileID: 1561800699}
   m_Layer: 0
   m_Name: Mech Creation Handler
   m_TagString: Untagged
@@ -3083,6 +3084,17 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1561800699
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1561800696}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ecb84c8190e27c641bab7651eb2b9f5f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1568111732
 GameObject:
   m_ObjectHideFlags: 0

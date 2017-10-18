@@ -47,7 +47,7 @@ namespace Core.Network.Login
 #endif
         }
 
-        private void ChangeToFirstLevel(int userID)
+        private void ChangeToFirstLevel()
         {
             SceneManager.LoadScene("Menu");
         }

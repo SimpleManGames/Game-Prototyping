@@ -14,6 +14,8 @@ namespace Core.Managers
             get { return _stateMachine; }
         }
 
+        // When multiplayer is more implemented these need to go
+
         [SerializeField, ReadOnly]
         private Player _player;
         public Player Player
@@ -27,6 +29,8 @@ namespace Core.Managers
         {
             get { return _camera; }
         }
+
+        // -----------------------------------------------------
 
         [SerializeField, ReadOnly]
         private ResourceManager _resourceManager;

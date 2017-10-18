@@ -718,7 +718,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0348b8a540f935546a3225aa0de5b7c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ForceAssetBundlesInEditor: 1
+  ForceAssetBundlesInEditor: 0
 --- !u!1 &2084204122
 GameObject:
   m_ObjectHideFlags: 0

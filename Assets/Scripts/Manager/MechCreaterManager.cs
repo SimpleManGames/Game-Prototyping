@@ -9,7 +9,7 @@ using UnityEngine.UI;
 
 namespace Game.Managers
 {
-    public class MechCreaterManager : Singleton<MechCreaterManager>
+    public class MechCreaterManager : MonoBehaviour
     {
         public GameObject defaultToggleValues;
         public InputField mechNameSaveField;
@@ -19,13 +19,32 @@ namespace Game.Managers
         private PartInfo[] parts;
         private List<PartInfo> selectedParts;
 
-        public override void Awake()
+        public void Awake()
         {
-            base.Awake();
             UI = GameObject.Find("Mech Creation UI").GetComponent<Canvas>();
             demoMech = GameObject.Find("Creation Mech");
 
             selectedParts = new List<PartInfo>();
+
+            PlayerManager.LoadPlayer();
+            PlayerManager.OnPlayerLoadOK += LoadPlayer;
+        }
+
+        private void LoadPlayer(int id, string playerName, string data)
+        {
+            int count = 6;
+            int k = 0;
+
+            List<string> partStrings = data.ToLookup(c => Mathf.Floor(k++ / count)).Select(e => new String(e.ToArray())).ToList();
+
+            foreach (string partName in partStrings)
+            {
+                foreach (PartInfo part in parts.Where(p => p.Name == partName))
+                {
+                    GameManager.Instance.ResourceManager.LoadAssetAsync<GameObject>(part.Prefab.Entry, (prefab) => { Instantiate(prefab, demoMech.transform); });
+                    selectedParts.Add(part);
+                }
+            }
         }
 
         public void Start()
@@ -61,23 +80,30 @@ namespace Game.Managers
                 {
                     if (value)
                     {
+                        var check = selectedParts.Where(p => p.Type == part.Type).ToArray();
+                        if (check.Length > 0)
+                        {
+                            Destroy(demoMech.transform.Find(check[0].Name + "(Clone)")?.gameObject);
+                            selectedParts.Remove(check[0]);
+                        }
+
                         GameManager.Instance.ResourceManager.LoadAssetAsync<GameObject>(part.Prefab.Entry, (prefab) => { Instantiate(prefab, demoMech.transform); });
                         selectedParts.Add(part);
                     }
-                    else
-                    {
-                        GameObject partToBeDeleted = demoMech.transform.Find(part.Name + "(Clone)")?.gameObject;
+                    //else
+                    //{
+                    //    GameObject partToBeDeleted = demoMech.transform.Find(part.Name + "(Clone)")?.gameObject;
 
-                        if (partToBeDeleted == null)
-                            return;
+                    //    if (partToBeDeleted == null)
+                    //        return;
 
-                        Destroy(partToBeDeleted);
+                    //    Destroy(partToBeDeleted);
 
-                        if (selectedParts.Find(f => f == part) == null)
-                            return;
+                    //    if (selectedParts.Find(f => f == part) == null)
+                    //        return;
 
-                        selectedParts.Remove(part);
-                    }
+                    //    selectedParts.Remove(part);
+                    //}
                 });
 
                 toggle.GetComponentInChildren<Text>().text = part.Name;
@@ -91,6 +117,7 @@ namespace Game.Managers
             return selectedParts.Select(p => p.Name).SelectMany(s => Encoding.ASCII.GetBytes(s)).ToArray();
         }
 
+        [Obsolete]
         private List<string> GetPartsFromByteArray(byte[] bytes)
         {
             return Encoding.ASCII.GetString(bytes, 0, bytes.Length - 1).Split(new string[] { "\r\n", "\r", "\n" }, StringSplitOptions.None).ToList();

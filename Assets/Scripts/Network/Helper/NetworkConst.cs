@@ -9,6 +9,8 @@
         {
             public const ushort playerSaveData = 1;
             public const ushort playerLoadData = 2;
+            public const ushort playerSavedOkData = 3;
+            public const ushort playerRecieveData = 4;
         }
 
         public class LoginS
