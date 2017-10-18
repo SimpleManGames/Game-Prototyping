@@ -19,6 +19,8 @@ public class MechCreaterManager : Singleton<MechCreaterManager>
         base.Awake();
         UI = GameObject.Find("Mech Creation UI").GetComponent<Canvas>();
         demoMech = GameObject.Find("Creation Mech");
+
+        selectedParts = new List<PartInfo>();
     }
 
     public void Start()
@@ -59,8 +61,12 @@ public class MechCreaterManager : Singleton<MechCreaterManager>
                     if (partToBeDeleted == null)
                         return;
 
-                    selectedParts.Remove(part);
                     Destroy(partToBeDeleted);
+
+                    if (selectedParts.Find(f => f == part) == null)
+                        return;
+
+                    selectedParts.Remove(part);
                 }
             });
 
