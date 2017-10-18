@@ -25,10 +25,6 @@ public class Player : Agent
     private float moveAmount;
     public float MoveAmount { get; set; }
     [ReadOnly] public bool canMove;
-    [ReadOnly, Obsolete] public bool lockOn;
-    [ReadOnly, Obsolete] public bool rolling;
-    [Obsolete] public float rollModifier = 1;
-    [ReadOnly, Obsolete] public Vector2 rollInput;
 
     #endregion
     
