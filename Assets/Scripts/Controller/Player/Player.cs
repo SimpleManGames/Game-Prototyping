@@ -10,6 +10,7 @@ public class Player : Agent
 
     [HideInInspector]
     public Transform cameraRigTransform;
+    private CameraController cameraController;
 
     Controller controller;
     public Animator Animator { get; private set; }
@@ -25,13 +26,25 @@ public class Player : Agent
     private float moveAmount;
     public float MoveAmount { get; set; }
     [ReadOnly] public bool canMove;
-    [ReadOnly, Obsolete] public bool lockOn;
-    [ReadOnly, Obsolete] public bool rolling;
-    [Obsolete] public float rollModifier = 1;
-    [ReadOnly, Obsolete] public Vector2 rollInput;
+    [ReadOnly] public bool lockOn;
+    [ReadOnly] public bool rolling;
+    public float rollModifier = 1;
+    [ReadOnly] public Vector2 rollInput;
 
     #endregion
-    
+
+    [SerializeField] private float targetableRange = 20f;
+    [SerializeField] private LayerMask targetableLayer;
+    [SerializeField, ReadOnly] private List<GameObject> targetables = new List<GameObject>();
+    public List<GameObject> Targetables
+    {
+        get { return targetables; }
+    }
+    [Obsolete] private float halfVisionConeSize = 45f;
+
+    [Header("Debug")]
+    [SerializeField] private bool debugTargets;
+
     public override void Awake()
     {
         base.Awake();
@@ -48,11 +61,14 @@ public class Player : Agent
         base.Start();
         maxJumpVelocity = Mathf.Abs(Gravity) * timeToJumpApex;
         minJumpVelocity = Mathf.Sqrt(2 * Mathf.Abs(Gravity) * minJumpHeight);
+
+        cameraController = cameraRigTransform.GetComponent<CameraController>();
     }
 
     public void Update()
     {
         canMove = Animator.GetBool("canMove");
+        rolling = Animator.GetBool("rolling");
 
         HandleMovement();
 
@@ -60,6 +76,8 @@ public class Player : Agent
             RotateTransform();
 
         UpdateAnimationValues();
+        
+        CheckTargetRadius();
     }
 
     private void HandleMovement()
@@ -99,10 +117,133 @@ public class Player : Agent
 
     private void UpdateAnimationValues()
     {
+        float v = input.Current.MoveInput.z;
+        float h = input.Current.MoveInput.x;
+
+        if (input.Current.RollInput)
+        {
+            rollInput.y = input.Current.MoveInput.z;
+            rollInput.x = input.Current.MoveInput.x;
+        }
+
+
+        if (lockOn)
+        {
+            if (rolling)
+            {
+                Animator.SetFloat("vertical", rollInput.y);
+                Animator.SetFloat("horizontal", rollInput.x);
+                return;
+            }
+
+            Animator.SetFloat("vertical", v, 0.2f, controller.DeltaTime);
+            Animator.SetFloat("horizontal", h, 0.1f, controller.DeltaTime);
+            return;
+        }
+
+        if (rolling)
+        {
+            if (lockOn == false)
+            {
+                rollInput.y = 1;
+                rollInput.x = 0;
+
+                Animator.SetFloat("vertical", rollInput.y);
+                Animator.SetFloat("horizontal", rollInput.x);
+                return;
+            }
+            else
+            {
+                if (Mathf.Abs(rollInput.y) > 0.3f)
+                    rollInput.y = 0f;
+                if (Mathf.Abs(rollInput.x) > 0.3f)
+                    rollInput.x = 0f;
+
+                Animator.SetFloat("vertical", rollInput.y);
+                Animator.SetFloat("horizontal", rollInput.x);
+                return;
+            }
+        }
+
         if (canMove)
+        {
             Animator.SetFloat("vertical", moveAmount);
+        }
     }
-    
+
+    [Obsolete("This method is no longer used, just want to keep it around")]
+    private void DetectTargetablesInCone()
+    {
+        var hits = Physics.OverlapSphere(transform.position, 25f, targetableLayer, QueryTriggerInteraction.Collide);
+
+        if (hits.Length == 0)
+            return;
+
+        foreach (var hit in hits)
+        {
+            if (hit.gameObject.GetComponent(typeof(ITargetable)))
+            {
+                Vector3 myPos = transform.position;
+                Vector3 myVector = transform.forward;
+                Vector3 theirPos = hit.transform.position;
+                Vector3 theirVector = theirPos - myPos;
+
+                float mag = Vector3.SqrMagnitude(myVector) * Vector3.SqrMagnitude(theirVector);
+
+                if (mag == 0f)
+                    return;
+
+                float dotProd = Vector3.Dot(myVector, theirPos - myPos);
+                bool isNegative = dotProd < 0f;
+                dotProd *= dotProd;
+
+                if (isNegative)
+                    dotProd *= -1;
+
+                float sqrAngle = Mathf.Rad2Deg * Mathf.Acos(dotProd / mag);
+                bool isInFront = sqrAngle < halfVisionConeSize;
+
+                Debug.DrawLine(myPos, theirPos, isInFront ? Color.green : Color.red);
+                if (isInFront)
+                {
+                    int mask = 1 << controller.walkable;
+                    if (!Physics.Linecast(myPos, theirPos, mask))
+                    {
+                        Debug.Log("See target " + hit.name);
+                    }
+                }
+            }
+        }
+    }
+
+    private void CheckTargetRadius()
+    {
+        targetables.Clear();
+        var hits = Physics.OverlapSphere(transform.position, 25f, targetableLayer, QueryTriggerInteraction.Collide);
+
+        if (hits.Length == 0)
+            return;
+
+        foreach (var hit in hits)
+        {
+            ITargetable target = hit.gameObject.GetComponent(typeof(ITargetable)) as ITargetable;
+            if (target == null)
+                continue;
+
+            if (!target.IsTargetable())
+                continue;
+
+            Vector3 playerPosition = transform.position + (Vector3.up * controller.Height / 2);
+
+            if (!Physics.Linecast(playerPosition, target.TargetPosition(), controller.walkable))
+                targetables.Add(hit.gameObject);
+        }
+
+        if (debugTargets)
+            foreach (var target in targetables)
+                Debug.DrawLine(transform.position + (Vector3.up * controller.Height / 2), (target.transform.GetComponent(typeof(ITargetable)) as ITargetable).TargetPosition());
+    }
+
     #region State Management
 
     public bool MaintainingGround()
@@ -159,6 +300,18 @@ public class Player : Agent
         return false;
     }
 
+    public bool HandleTargetState()
+    {
+        if (input.Current.TargetInput && Targetables.Count > 0)
+        {
+            state.CurrentState = new PlayerLockOnState(state, this, controller, null);
+            return true;
+        }
+
+        input.Current.TargetInput = false;
+        return false;
+    }
+
     public bool HandleMoveState()
     {
         if (input.Current.MoveInput != Vector3.zero)
@@ -194,6 +347,17 @@ public class Player : Agent
             state.CurrentState = new PlayerIdleState(state, this, controller);
             return true;
         }
+        return false;
+    }
+
+    public bool HandleRollState()
+    {
+        if (input.Current.RollInput)
+        {
+            state.CurrentState = new PlayerRollState(state, this, controller);
+            return true;
+        }
+
         return false;
     }
 
