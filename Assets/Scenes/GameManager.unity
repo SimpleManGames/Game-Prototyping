@@ -702,7 +702,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   destroyOnLoad: 0
   _stateMachine:
-    debugStateChanges: 1
+    debugStateChanges: 0
   _player: {fileID: 0}
   _camera: {fileID: 0}
   _resourceManager: {fileID: 0}

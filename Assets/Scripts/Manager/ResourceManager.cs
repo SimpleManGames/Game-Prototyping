@@ -16,6 +16,7 @@ namespace Core.Managers
         public static string AssetInfoXMLPath { get { return Application.streamingAssetsPath + "/XML"; } }
 
         public bool ForceAssetBundlesInEditor = false;
+        public bool debug = false;
 
         private Dictionary<ID, AssetBundle> loadedBundles = new Dictionary<ID, AssetBundle>();
 
@@ -27,7 +28,8 @@ namespace Core.Managers
             {
                 string url = "file://" + AssetBundlePath + "/" + info.Name;
 
-                Debug.Log("Loading bundle: " + url);
+                if (debug)
+                    Debug.Log("Loading bundle: " + url);
 
                 WWW www = new WWW(url);
                 yield return www;

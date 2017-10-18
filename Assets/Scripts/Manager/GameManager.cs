@@ -53,7 +53,6 @@ namespace Core.Managers
             _resourceManager = GetComponent<ResourceManager>();
             _stateMachine = _stateMachine ?? new StateMachine();
             
-            Debug.Log(Application.streamingAssetsPath);
             Database.Instance.ReadFiles(Application.streamingAssetsPath + "/XML/");
             ResourceManager.LoadBundlesAsync(() => OnFinishedLoading?.Invoke());
 

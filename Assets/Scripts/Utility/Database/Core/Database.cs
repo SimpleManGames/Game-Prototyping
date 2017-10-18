@@ -11,6 +11,8 @@ namespace Core.XmlDatabase
 
     public sealed class Database
     {
+        private static bool debug = false;
+
         private static Database _instance;
         public static Database Instance
         {
@@ -84,7 +86,8 @@ namespace Core.XmlDatabase
 
             if (!tables.TryGetValue(entry.GetType(), out table))
             {
-                Debug.Log("Created table for: " + entry.GetType().ToString());
+                if (debug)
+                    Debug.Log("Created table for: " + entry.GetType().ToString());
 
                 table = new DatabaseTable();
 
@@ -93,14 +96,20 @@ namespace Core.XmlDatabase
 
             if (ID.IsNullOrNoID(entry.DatabaseID))
             {
-                Debug.LogError("Database Entry has no ID: " + entry.GetType().ToString());
+                if (debug)
+                    Debug.LogError("Database Entry has no ID: " + entry.GetType().ToString());
                 return;
             }
 
             if (!table.ContainsKey(entry.DatabaseID))
                 table.Add(entry.DatabaseID, entry);
             else
-                Debug.LogWarning("Duplicate database entry: " + entry.DatabaseID);
+            {
+                if (debug)
+                {
+                    Debug.LogWarning("Duplicate database entry: " + entry.DatabaseID);
+                }
+            }
         }
 
         public T GetEntry<T>(ID id) where T : DatabaseEntry
