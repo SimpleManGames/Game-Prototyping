@@ -3058,6 +3058,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   destroyOnLoad: 1
   defaultToggleValues: {fileID: 480439273}
+  mechNameSaveField: {fileID: 745286035}
 --- !u!4 &1561800698
 Transform:
   m_ObjectHideFlags: 0

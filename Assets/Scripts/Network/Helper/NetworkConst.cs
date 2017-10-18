@@ -1,4 +1,4 @@
-﻿namespace Core.Network
+﻿namespace Core.Network.Const
 {
     public class NT
     {
