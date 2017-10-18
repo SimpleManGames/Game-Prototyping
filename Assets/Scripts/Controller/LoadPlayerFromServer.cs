@@ -1,23 +1,13 @@
-﻿using Core.Managers;
-using Core.Network;
-using Core.Network.Login;
-using Core.XmlDatabase;
+﻿using Core.Network.Login;
 using DarkRift;
 using Game.Managers;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public class LoadPlayerFromServer : MonoBehaviour
 {
-    private PartInfo[] parts;
+    public delegate void CharacterReadyEventHandler();
 
-    private void Awake()
-    {
-        parts = Database.Instance.GetEntries<PartInfo>();
-    }
+    public static event CharacterReadyEventHandler OnCharacterReady;
 
     void Start()
     {
@@ -32,20 +22,10 @@ public class LoadPlayerFromServer : MonoBehaviour
     {
         if (LoginManager.UserID != id)
             return;
-
-        int count = 6;
-        int k = 0;
-
-        List<string> partStrings = data.ToLookup(c => Mathf.Floor(k++ / count)).Select(e => new String(e.ToArray())).ToList();
-
-        foreach (string partName in partStrings)
-        {
-            foreach (PartInfo part in parts.Where(p => p.Name == partName))
-            {
-                GameManager.Instance.ResourceManager.LoadAssetAsync<GameObject>(part.Prefab.Entry, (prefab) => { Instantiate(prefab, transform.GetChild(0).transform); });
-            }
-        }
+        Debug.Log(id + " " + playerName + " ");
+        GetComponent<Player>().CreateThisPlayer(id, playerName, data);
 
         PlayerManager.OnPlayerLoadOK -= LoadPlayer;
+        OnCharacterReady?.Invoke();
     }
 }

@@ -20,12 +20,15 @@ public sealed class PlayerIdleState : IState
         controller.EnableSlopeLimit();
         controller.EnableClamping();
 
-        player.Animator.SetFloat("vertical", 0f);
+        player?.Animator?.SetFloat("vertical", 0f);
         player.moveDirection.y = 0f;
     }
 
     public void Update()
     {
+        if (player == null)
+            return;
+
         if (player.HandleJumpState())
             return;
 

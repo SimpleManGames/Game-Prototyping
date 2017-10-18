@@ -1,12 +1,11 @@
 ﻿using Core.Network.Const;
 using Core.Network.Login;
 using DarkRift;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Game.Managers
 {
-    public class PlayerManager
+    public class PlayerManager : MonoBehaviour
     {
         public delegate void PlayerSavedOKEventHandler();
         public delegate void PlayerLoadOKEventHandler(int id, string playerName, string data);
@@ -14,7 +13,85 @@ namespace Game.Managers
         public static event PlayerSavedOKEventHandler OnPlayerSavedOK;
         public static event PlayerLoadOKEventHandler OnPlayerLoadOK;
 
-        public static List<string> playerPart = new List<string>();
+        [ReadOnly]
+        public Player clientPlayer;
+
+        private void Start()
+        {
+            clientPlayer = GameObject.Find("Player").GetComponent<Player>();
+
+            DarkRiftAPI.onDataDetailed += ReveiveData;
+            DarkRiftAPI.onPlayerDisconnected += PlayerDisconnected;
+
+            LoadPlayerFromServer.OnCharacterReady += SendNewPlayer;            
+        }
+
+        private void SendNewPlayer()
+        {
+            if(DarkRiftAPI.isConnected)
+            {
+                DarkRiftAPI.SendMessageToOthers(NT.StartT, NT.StartS.JoinGame, "");
+
+                using (DarkRiftWriter writer = new DarkRiftWriter())
+                {
+                    if (clientPlayer == null)
+                        return;
+
+                    writer.Write(clientPlayer.UserID);
+                    writer.Write(clientPlayer.PlayerName);
+                    writer.Write(clientPlayer.PlayerData);
+                    DarkRiftAPI.SendMessageToOthers(NT.StartT, NT.StartS.Spawn, writer);
+                }
+            }
+        }
+
+        private void ReveiveData(ushort sender, byte tag, ushort subject, object data)
+        {
+            if(tag == NT.StartT)
+            {
+                if(subject == NT.StartS.JoinGame)
+                {
+                    using (DarkRiftWriter writer = new DarkRiftWriter())
+                    {
+                        if (clientPlayer == null)
+                            return;
+
+                        writer.Write(clientPlayer.UserID);
+                        writer.Write(clientPlayer.PlayerName);
+                        writer.Write(clientPlayer.PlayerData);
+
+                        Debug.Log(clientPlayer.UserID + " " + clientPlayer.PlayerName);
+
+                        DarkRiftAPI.SendMessageToID(sender, NT.StartT, NT.StartS.Spawn, writer);
+                    }
+                }
+
+                if(subject == NT.StartS.Spawn)
+                {
+                    using (DarkRiftReader reader = (DarkRiftReader)data)
+                    {
+                        int id = reader.ReadInt32();
+                        string playerName = reader.ReadString();
+                        string playerData = reader.ReadString();
+
+                        BuildOther(sender, id, playerName, playerData);
+                    }
+                }
+            }
+        }
+
+        private void BuildOther(ushort sender, int id, string playerName, string data)
+        {
+            GameObject otherPlayerObject = new GameObject("Player ID: " + sender);
+            Player otherPlayerComponent = otherPlayerObject.AddComponent<Player>();
+            otherPlayerComponent.CreateThisPlayer(sender, id, playerName, data);
+        }
+
+        private void PlayerDisconnected(ushort id)
+        {
+            GameObject obj = GameObject.Find("Player ID: " + id.ToString());
+            Destroy(obj, 0.1f);
+        }
 
         public static void SavePlayer(string playername, byte[] bytes)
         {
@@ -23,7 +100,6 @@ namespace Game.Managers
                 writer.Write(LoginManager.UserID);
                 writer.Write(playername);
                 writer.Write(bytes);
-                Debug.Log(bytes.ToString());
                 SendToServer(NT.PlayerT, NT.PlayerS.playerSaveData, writer);
             }
         }

@@ -12,6 +12,8 @@ namespace Game.Managers
 {
     public class MechCreaterManager : MonoBehaviour
     {
+        public static string playerName;
+
         public GameObject defaultToggleValues;
         public InputField mechNameSaveField;
 
@@ -48,6 +50,7 @@ namespace Game.Managers
             }
 
             PlayerManager.OnPlayerLoadOK -= LoadPlayer;
+            MechCreaterManager.playerName = playerName;
         }
 
         public void Start()

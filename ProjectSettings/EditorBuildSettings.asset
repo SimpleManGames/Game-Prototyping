@@ -12,11 +12,11 @@ EditorBuildSettings:
     path: Assets/Scenes/Menu.unity
     guid: f1cd7c781809c024e8256a0d27b2be7e
   - enabled: 1
-    path: Assets/Scenes/GameManager.unity
-    guid: 553bd990b0f795e40bc7af105ba1bfd5
+    path: Assets/Scenes/MechCreation.unity
+    guid: fdbfac55a91bca940b74852df270c52c
   - enabled: 1
     path: Assets/Scenes/controllerDev.unity
     guid: 7fc2a47a650e7754d957a863f77cf2ed
   - enabled: 1
-    path: Assets/Scenes/MechCreation.unity
-    guid: fdbfac55a91bca940b74852df270c52c
+    path: Assets/Scenes/GameManager.unity
+    guid: 553bd990b0f795e40bc7af105ba1bfd5

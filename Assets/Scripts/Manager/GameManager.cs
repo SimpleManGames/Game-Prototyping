@@ -2,6 +2,7 @@
 using Core.XmlDatabase;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Game.Managers;
 
 namespace Core.Managers
 {
@@ -13,6 +14,15 @@ namespace Core.Managers
         {
             get { return _stateMachine; }
         }
+
+        [SerializeField, ReadOnly]
+        private PlayerManager _playerManager;
+        public PlayerManager PlayerManager
+        {
+            get { return _playerManager; }
+            set { _playerManager = value; }
+        }
+
 
         // When multiplayer is more implemented these need to go
 
@@ -52,7 +62,8 @@ namespace Core.Managers
             _camera = FindObjectOfType<Camera>();
             _resourceManager = GetComponent<ResourceManager>();
             _stateMachine = _stateMachine ?? new StateMachine();
-            
+            //_playerManager = FindObjectOfType<PlayerManager>(); //GetComponent<PlayerManager>();
+
             Database.Instance.ReadFiles(Application.streamingAssetsPath + "/XML/");
             ResourceManager.LoadBundlesAsync(() => OnFinishedLoading?.Invoke());
 
@@ -83,7 +94,10 @@ namespace Core.Managers
             _camera = null;
             _camera = FindObjectOfType<Camera>();
 
-            _player = _player ?? FindObjectOfType<Player>();
+            _player = _player ?? GameObject.Find("Player")?.GetComponent<Player>();
+
+            if(scene.name == "controllerDev")
+                _playerManager = FindObjectOfType<PlayerManager>();
         }
 
         public void Quit()

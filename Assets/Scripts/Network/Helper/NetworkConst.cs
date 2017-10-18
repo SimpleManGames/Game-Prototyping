@@ -2,8 +2,15 @@
 {
     public class NT
     {
+        public const byte StartT = 5;
         public const byte LoginT = 10;
         public const byte PlayerT = 11;
+
+        public class StartS
+        {
+            public const ushort JoinGame = 1;
+            public const ushort Spawn = 2;
+        }
 
         public class PlayerS
         {

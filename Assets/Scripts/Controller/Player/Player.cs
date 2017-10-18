@@ -1,5 +1,10 @@
-﻿using System;
+﻿using Core.Managers;
+using Core.Network.Login;
+using Core.XmlDatabase;
+using Game.Managers;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 [SelectionBase, RequireComponent(typeof(Controller)), RequireComponent(typeof(PlayerInputController))]
@@ -16,7 +21,7 @@ public class Player : Agent
     public Animator Animator { get; private set; }
     private GameObject modelObject;
 
-    #region Movement Info
+    #region -Movement Info
 
     [Header("Movement Info")]
     [ReadOnly, Tooltip("Describes the direction the player controller is trying to move. " +
@@ -29,31 +34,46 @@ public class Player : Agent
 
     #endregion
 
-    [SerializeField] private float targetableRange = 20f;
-    [SerializeField] private LayerMask targetableLayer;
-    [SerializeField, ReadOnly] private List<GameObject> targetables = new List<GameObject>();
-    public List<GameObject> Targetables
-    {
-        get { return targetables; }
-    }
-    [Obsolete] private float halfVisionConeSize = 45f;
+    #region -Network Info
 
-    [Header("Debug")]
-    [SerializeField] private bool debugTargets;
+    public int NetworkID { get; private set; }
+    public int UserID { get; private set; }
+    public string PlayerName { get; private set; }
+    public string PlayerData { get; private set; }
+
+    public bool IsClientPlayer { get { return name == "Player"; } }
+
+    #endregion
 
     public override void Awake()
     {
+        if (GameManager.Instance.PlayerManager == null)
+            GameManager.Instance.PlayerManager = FindObjectOfType<PlayerManager>();
+
+        //GameManager.Instance.PlayerManager.clientPlayer = this;
+
         base.Awake();
         controller = GetComponent<Controller>();
         Animator = GetComponentInChildren<Animator>();
         input = GetComponent<PlayerInputController>();
         state.CurrentState = new PlayerIdleState(state, this, controller);
 
-        modelObject = transform.Find("boxMan").gameObject;
+        modelObject = transform.Find("Model")?.gameObject;
+
+        if (!IsClientPlayer)
+        {
+            Debug.Log("Not Player Client");
+            if (controller) controller.enabled = false;
+            if (Animator) Animator.enabled = false;
+            if (input) input.enabled = false;
+        }
     }
 
     public override void Start()
     {
+        if (!IsClientPlayer)
+            return;
+
         base.Start();
         maxJumpVelocity = Mathf.Abs(Gravity) * timeToJumpApex;
         minJumpVelocity = Mathf.Sqrt(2 * Mathf.Abs(Gravity) * minJumpHeight);
@@ -63,6 +83,9 @@ public class Player : Agent
 
     public void Update()
     {
+        if (!IsClientPlayer)
+            return;
+
         canMove = Animator.GetBool("canMove");
 
         HandleMovement();
@@ -115,7 +138,39 @@ public class Player : Agent
             Animator.SetFloat("vertical", moveAmount);
         }
     }
-    
+
+    public void CreateThisPlayer(int sender, int userID, string playerName, string data)
+    {
+        NetworkID = sender;
+        CreateThisPlayer(userID, playerName, data);
+    }
+
+    public void CreateThisPlayer(int userID, string playerName, string data)
+    {
+        PlayerName = playerName;
+        PlayerData = data;
+
+        int count = 6;
+        int k = 0;
+
+        List<string> partStrings = data.ToLookup(c => Mathf.Floor(k++ / count)).Select(e => new String(e.ToArray())).ToList();
+
+        foreach (string partName in partStrings)
+            foreach (PartInfo part in Database.Instance.GetEntries<PartInfo>().Where(p => p.Name == partName))
+                GameManager.Instance.ResourceManager.LoadAssetAsync<GameObject>(part.Prefab.Entry, (prefab) =>
+                {
+                    Transform child = transform.Find("Model");
+                    if (child == null)
+                    {
+                        GameObject newObj = new GameObject("Model");
+                        newObj.transform.parent = transform;
+                        child = newObj.transform;
+                    }
+
+                    Instantiate(prefab, child);
+                });
+    }
+
     #region State Management
 
     public bool MaintainingGround()
@@ -171,7 +226,7 @@ public class Player : Agent
 
         return false;
     }
-    
+
     public bool HandleMoveState()
     {
         if (input.Current.MoveInput != Vector3.zero)
@@ -209,6 +264,6 @@ public class Player : Agent
         }
         return false;
     }
-    
+
     #endregion
 }

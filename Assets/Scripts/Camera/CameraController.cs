@@ -50,6 +50,12 @@ public class CameraController : MonoBehaviour
         else
             Debug.LogError("Target's Parent needs to have a PlayerController component" + target.parent.name);
 
+        if (!playerController.IsClientPlayer)
+        {
+            enabled = false;
+            return;
+        }
+
         settings.ActOnSettings();
 
         playerController.cameraRigTransform = transform;
