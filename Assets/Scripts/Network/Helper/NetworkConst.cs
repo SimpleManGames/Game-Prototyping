@@ -3,6 +3,13 @@
     public class NT
     {
         public const byte LoginT = 10;
+        public const byte PlayerT = 11;
+
+        public class PlayerS
+        {
+            public const ushort playerSaveData = 1;
+            public const ushort playerLoadData = 2;
+        }
 
         public class LoginS
         {
