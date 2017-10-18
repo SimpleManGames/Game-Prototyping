@@ -14,9 +14,6 @@ namespace Game.Managers
                 writer.Write(LoginManager.UserID);
                 writer.Write(playername);
                 writer.Write(bytes);
-
-                Debug.Log("Saved PlayerData Length: " + bytes.Length);
-
                 SendToServer(NT.PlayerT, NT.PlayerS.playerSaveData, writer);
             }
         }

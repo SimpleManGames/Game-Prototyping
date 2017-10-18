@@ -1474,7 +1474,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 295d7313087966545842700c2353e54f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mechObject: {fileID: 0}
 --- !u!1001 &482973924
 Prefab:
   m_ObjectHideFlags: 0
@@ -3049,6 +3048,16 @@ Prefab:
       propertyPath: m_LocalScale.z
       value: 0.3
       objectReference: {fileID: 0}
+    - target: {fileID: 95434968381402916, guid: 7c67eaf6ac50fc34990e10db8791f70b,
+        type: 2}
+      propertyPath: m_Avatar
+      value: 
+      objectReference: {fileID: 9000000, guid: 3289f831d27b9f941a3a149b37b624cc, type: 3}
+    - target: {fileID: 95434968381402916, guid: 7c67eaf6ac50fc34990e10db8791f70b,
+        type: 2}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 4e65f47559726f241bfe65a1b5fae43c, type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 7c67eaf6ac50fc34990e10db8791f70b, type: 2}
   m_IsPrefabParent: 0

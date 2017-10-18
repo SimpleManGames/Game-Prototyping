@@ -1,7 +1,9 @@
 ﻿using Core.Managers;
 using Core.XmlDatabase;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -34,6 +36,11 @@ namespace Game.Managers
             CreateToggleGroup(PartType.Arms);
             CreateToggleGroup(PartType.Legs);
             CreateToggleGroup(PartType.Booster);
+        }
+
+        public void SaveMech()
+        {
+            PlayerManager.SavePlayer(mechNameSaveField.text, CreateByteArrayFromSelectParts());
         }
 
         private void CreateToggleGroup(PartType type)
@@ -77,6 +84,16 @@ namespace Game.Managers
             }
 
             panel.SetActive(false);
+        }
+
+        private byte[] CreateByteArrayFromSelectParts()
+        {
+            return selectedParts.Select(p => p.Name).SelectMany(s => Encoding.ASCII.GetBytes(s)).ToArray();
+        }
+
+        private List<string> GetPartsFromByteArray(byte[] bytes)
+        {
+            return Encoding.ASCII.GetString(bytes, 0, bytes.Length - 1).Split(new string[] { "\r\n", "\r", "\n" }, StringSplitOptions.None).ToList();
         }
     }
 }
