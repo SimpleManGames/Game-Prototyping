@@ -496,6 +496,23 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &1368962452885396
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4251621173738310}
+  - component: {fileID: 33167622968506718}
+  - component: {fileID: 23141699100041340}
+  m_Layer: 0
+  m_Name: Viking Sword
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
 --- !u!1 &1369254136469104
 GameObject:
   m_ObjectHideFlags: 1
@@ -807,23 +824,6 @@ GameObject:
   - component: {fileID: 4091766956999638}
   m_Layer: 0
   m_Name: LeftHandRing3_end
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!1 &1773734512466100
-GameObject:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 4170699934008728}
-  - component: {fileID: 33848360041638152}
-  - component: {fileID: 23943696574045760}
-  m_Layer: 0
-  m_Name: Viking Sword
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1233,19 +1233,6 @@ Transform:
   m_Father: {fileID: 4539690935507974}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &4170699934008728
-Transform:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1773734512466100}
-  m_LocalRotation: {x: -0.7020103, y: 0.6011353, z: 0.17310643, w: -0.3403707}
-  m_LocalPosition: {x: 0.1431, y: 0.0852, z: 0.1369}
-  m_LocalScale: {x: 0.39370105, y: 0.39370084, z: 0.39370087}
-  m_Children: []
-  m_Father: {fileID: 4338570749388208}
-  m_RootOrder: 5
-  m_LocalEulerAnglesHint: {x: 15.650001, y: -137.36101, z: -92.712006}
 --- !u!4 &4198176201793560
 Transform:
   m_ObjectHideFlags: 1
@@ -1316,6 +1303,19 @@ Transform:
   m_Father: {fileID: 4552255114410092}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4251621173738310
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1368962452885396}
+  m_LocalRotation: {x: -0.7020103, y: 0.6011353, z: 0.17310643, w: -0.3403707}
+  m_LocalPosition: {x: 0.1431, y: 0.0852, z: 0.1369}
+  m_LocalScale: {x: 0.39370105, y: 0.39370084, z: 0.39370087}
+  m_Children: []
+  m_Father: {fileID: 4338570749388208}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 15.650001, y: -137.36101, z: -92.712006}
 --- !u!4 &4258408166034794
 Transform:
   m_ObjectHideFlags: 1
@@ -1455,7 +1455,7 @@ Transform:
   - {fileID: 4258408166034794}
   - {fileID: 4884407869677480}
   - {fileID: 4077050215253846}
-  - {fileID: 4170699934008728}
+  - {fileID: 4251621173738310}
   m_Father: {fileID: 4202571846986876}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2049,12 +2049,12 @@ Transform:
   m_Father: {fileID: 4473248392240492}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!23 &23943696574045760
+--- !u!23 &23141699100041340
 MeshRenderer:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1773734512466100}
+  m_GameObject: {fileID: 1368962452885396}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -2081,12 +2081,12 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!33 &33848360041638152
+--- !u!33 &33167622968506718
 MeshFilter:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1773734512466100}
+  m_GameObject: {fileID: 1368962452885396}
   m_Mesh: {fileID: 4300000, guid: 51f87c2d45366c348b01ff4cc51245d3, type: 3}
 --- !u!95 &95294135743773198
 Animator:

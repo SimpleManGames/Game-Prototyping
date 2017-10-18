@@ -22,6 +22,6 @@ public class ApplyRootMotionToParent : MonoBehaviour
     private void OnAnimatorMove()
     {
         if (player?.canMove == false)
-            parentObject.position += animator.deltaPosition * player.rollModifier;
+            parentObject.position += animator.deltaPosition;
     }
 }

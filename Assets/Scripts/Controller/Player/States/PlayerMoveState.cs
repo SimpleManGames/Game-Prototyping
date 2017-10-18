@@ -34,18 +34,12 @@ public class PlayerMoveState : IState
         if (player.HandleFallState())
             return;
 
-        if (player.HandleTargetState())
-            return;
-
         if (!player.HandleIdleState())
         {
             Vector3 dirInputNor = player.input.Current.MoveInput.normalized;
             player.moveDirection = Vector3.MoveTowards(player.moveDirection, player.LocalMovement() * player.moveSpeed, 30.0f * controller.DeltaTime);
         }
         else
-            return;
-
-        if (player.HandleRollState())
             return;
                 
         if (player.HandleRunState())

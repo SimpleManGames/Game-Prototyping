@@ -32,13 +32,7 @@ public sealed class PlayerIdleState : IState
         if (player.HandleFallState())
             return;
 
-        if (player.HandleTargetState())
-            return;
-
         if (player.HandleMoveState())
-            return;
-
-        if (player.HandleRollState())
             return;
 
         player.moveDirection = Vector3.MoveTowards(player.moveDirection, Vector3.zero, 25f * controller.DeltaTime);
