@@ -49,7 +49,7 @@ namespace Core.Network.Login
             if (DarkRiftAPI.isConnected)
                 DarkRiftAPI.SendMessageToServer(tag, subject, data);
             else
-                Debug.LogError("[Login]: You can't add a user if you're not connected to a server");
+                Debug.LogError("[Login]: You can't send messages if you're not connected to a server");
 
             BindToDataEvent();
         }
