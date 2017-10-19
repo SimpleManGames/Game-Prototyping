@@ -215,16 +215,13 @@ public class Player : Agent
             // Update the other clients about are new position/rotation
 
             if (transform.position != _networkPosition)
-            {
                 DarkRiftAPI.SendMessageToOthers(NT.MoveT, NT.MoveS.Position, transform.position);
-                _networkPosition = transform.position;
-            }
 
             if (transform.rotation != _networkRotation)
-            {
                 DarkRiftAPI.SendMessageToOthers(NT.MoveT, NT.MoveS.Rotation, transform.rotation);
-                _networkRotation = transform.rotation;
-            }
+
+            _networkPosition = transform.position;
+            _networkRotation = transform.rotation;
         }
     }
 
@@ -237,12 +234,12 @@ public class Player : Agent
             {
                 if (subject == NT.MoveS.Position)
                 {
-                    transform.position = Vector3.Lerp(transform.position, (Vector3)data, 0.25f);
+                    transform.position = (Vector3)data;
                 }
 
                 if (subject == NT.MoveS.Rotation)
                 {
-                    transform.rotation = Quaternion.Lerp(transform.rotation, (Quaternion)data, 0.25f);
+                    transform.rotation = (Quaternion)data;
                 }
             }
         }
