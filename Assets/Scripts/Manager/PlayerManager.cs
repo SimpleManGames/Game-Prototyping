@@ -25,7 +25,15 @@ namespace Game.Managers
             DarkRiftAPI.onDataDetailed += ReceiveData;
             DarkRiftAPI.onPlayerDisconnected += PlayerDisconnected;
 
-            LoadPlayerFromServer.OnCharacterReady += SendNewPlayer;       
+            Player.OnCharacterReady += SendNewPlayer;       
+        }
+
+        private void BuildOther(ushort sender, int id, string playerName, string data)
+        {
+            Debug.Log("Creating Other Player");
+            GameObject otherPlayerObject = new GameObject("Player ID: " + sender.ToString());
+            Player otherPlayerComponent = otherPlayerObject.AddComponent<Player>();
+            otherPlayerComponent.CreateThisPlayer(sender, id, playerName, data);
         }
 
         private void SendNewPlayer()
@@ -79,14 +87,6 @@ namespace Game.Managers
                     }
                 }
             }
-        }
-
-        private void BuildOther(ushort sender, int id, string playerName, string data)
-        {
-            Debug.Log("Creating Other Player");
-            GameObject otherPlayerObject = new GameObject("Player ID: " + sender.ToString());
-            Player otherPlayerComponent = otherPlayerObject.AddComponent<Player>();
-            otherPlayerComponent.CreateThisPlayer(sender, id, playerName, data);
         }
 
         private void PlayerDisconnected(ushort id)

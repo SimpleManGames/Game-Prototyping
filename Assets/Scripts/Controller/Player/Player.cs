@@ -1,6 +1,7 @@
 ﻿using Core.Managers;
 using Core.Network.Login;
 using Core.XmlDatabase;
+using DarkRift;
 using Game.Managers;
 using System;
 using System.Collections.Generic;
@@ -35,6 +36,8 @@ public class Player : Agent
     #endregion
 
     #region -Network Info
+
+
 
     [SerializeField, ReadOnly]
     private int _networkID;
@@ -72,6 +75,9 @@ public class Player : Agent
 
     #endregion
 
+    public delegate void CharacterReadyEventHandler();
+    public static event CharacterReadyEventHandler OnCharacterReady;
+
     public override void Awake()
     {
         if (GameManager.Instance.PlayerManager == null)
@@ -99,6 +105,14 @@ public class Player : Agent
     {
         if (!IsClientPlayer)
             return;
+
+        if (DarkRiftAPI.isConnected)
+        {
+            PlayerManager.OnPlayerLoadOK += MakePlayer;
+            PlayerManager.LoadPlayer();
+        }
+
+        NetworkID = DarkRiftAPI.id;
 
         base.Start();
         maxJumpVelocity = Mathf.Abs(Gravity) * timeToJumpApex;
@@ -164,13 +178,31 @@ public class Player : Agent
             Animator.SetFloat("vertical", moveAmount);
         }
     }
+    
+    //
+    // Summary:
+    //      Makes the client player
+    //
+    private void MakePlayer(int id, string playerName, string data)
+    {
+        CreateThisPlayer(id, playerName, data);
+        OnCharacterReady?.Invoke();
+    }
 
+    //
+    // Summary:
+    //      Creates the player for this reference of Player
+    //
     public void CreateThisPlayer(int sender, int userID, string playerName, string data)
     {
         NetworkID = sender;
         CreateThisPlayer(userID, playerName, data);
     }
 
+    //
+    // Summary:
+    //      Creates the player for this reference of Player
+    //
     public void CreateThisPlayer(int userID, string playerName, string data)
     {
         UserID = userID;
