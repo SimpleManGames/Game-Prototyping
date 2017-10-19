@@ -22,7 +22,7 @@ public class LoadPlayerFromServer : MonoBehaviour
     {
         if (LoginManager.UserID != id)
             return;
-        Debug.Log(id + " " + playerName + " ");
+
         GetComponent<Player>().CreateThisPlayer(id, playerName, data);
 
         PlayerManager.OnPlayerLoadOK -= LoadPlayer;

@@ -998,6 +998,10 @@ MonoBehaviour:
   moveDirection: {x: 0, y: 0, z: 0}
   moveAmount: 0
   canMove: 0
+  _networkID: 0
+  _userID: 0
+  _playerName: 
+  _playerData: 
 --- !u!114 &453118738
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1905,6 +1909,15 @@ Prefab:
       propertyPath: parentObject
       value: 
       objectReference: {fileID: 589063940}
+    - target: {fileID: 1771394452052306, guid: 5e9ebac537deb034abb46f5b571199b5, type: 2}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 137803661755947326, guid: 5e9ebac537deb034abb46f5b571199b5,
+        type: 2}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 5e9ebac537deb034abb46f5b571199b5, type: 2}
   m_IsPrefabParent: 0

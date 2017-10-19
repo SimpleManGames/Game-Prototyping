@@ -36,10 +36,37 @@ public class Player : Agent
 
     #region -Network Info
 
-    public int NetworkID { get; private set; }
-    public int UserID { get; private set; }
-    public string PlayerName { get; private set; }
-    public string PlayerData { get; private set; }
+    [SerializeField, ReadOnly]
+    private int _networkID;
+    public int NetworkID
+    {
+        get { return _networkID; }
+        private set { _networkID = value; }
+    }
+
+    [SerializeField, ReadOnly]
+    private int _userID;
+    public int UserID
+    {
+        get { return _userID; }
+        private set { _userID = value; }
+    }
+
+    [SerializeField, ReadOnly]
+    private string _playerName;
+    public string PlayerName
+    {
+        get { return _playerName; }
+        private set { _playerName = value; }
+    }
+
+    [SerializeField, ReadOnly]
+    private string _playerData;
+    public string PlayerData
+    {
+        get { return _playerData; }
+        private set { _playerData = value; }
+    }
 
     public bool IsClientPlayer { get { return name == "Player"; } }
 
@@ -147,6 +174,7 @@ public class Player : Agent
 
     public void CreateThisPlayer(int userID, string playerName, string data)
     {
+        UserID = userID;
         PlayerName = playerName;
         PlayerData = data;
 

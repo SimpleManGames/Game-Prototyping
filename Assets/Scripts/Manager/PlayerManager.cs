@@ -64,8 +64,6 @@ namespace Game.Managers
                         writer.Write(clientPlayer.PlayerName);
                         writer.Write(clientPlayer.PlayerData);
 
-                        Debug.Log(clientPlayer.UserID + " " + clientPlayer.PlayerName);
-
                         DarkRiftAPI.SendMessageToID(sender, NT.StartT, NT.StartS.Spawn, writer);
                     }
                 }
@@ -78,6 +76,8 @@ namespace Game.Managers
                         string playerName = reader.ReadString();
                         string playerData = reader.ReadString();
 
+                        Debug.Log(id + " : " + playerName);
+
                         BuildOther(sender, id, playerName, playerData);
                     }
                 }
@@ -86,7 +86,7 @@ namespace Game.Managers
 
         private void BuildOther(ushort sender, int id, string playerName, string data)
         {
-            GameObject otherPlayerObject = new GameObject("Player ID: " + sender);
+            GameObject otherPlayerObject = new GameObject("Player ID: " + id.ToString());
             Player otherPlayerComponent = otherPlayerObject.AddComponent<Player>();
             otherPlayerComponent.CreateThisPlayer(sender, id, playerName, data);
         }
