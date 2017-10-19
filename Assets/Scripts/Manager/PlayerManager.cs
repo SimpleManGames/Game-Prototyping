@@ -1,9 +1,6 @@
-﻿using Core.Managers;
-using Core.Network.Const;
+﻿using Core.Network.Const;
 using Core.Network.Login;
-using Core.XmlDatabase;
 using DarkRift;
-using System.Linq;
 using UnityEngine;
 
 namespace Game.Managers
@@ -28,14 +25,23 @@ namespace Game.Managers
             Player.OnCharacterReady += SendNewPlayer;       
         }
 
+        //
+        // Summary:
+        //
+        //      Creates the object representing another player
+        //
         private void BuildOther(ushort sender, int id, string playerName, string data)
         {
-            Debug.Log("Creating Other Player");
             GameObject otherPlayerObject = new GameObject("Player ID: " + sender.ToString());
             Player otherPlayerComponent = otherPlayerObject.AddComponent<Player>();
             otherPlayerComponent.CreateThisPlayer(sender, id, playerName, data);
         }
 
+        //
+        // Summary:
+        //      Sends the client's player info to other clients 
+        //      so they can create their instances of this client
+        //
         private void SendNewPlayer()
         {
             if(DarkRiftAPI.isConnected)
@@ -44,9 +50,6 @@ namespace Game.Managers
 
                 using (DarkRiftWriter writer = new DarkRiftWriter())
                 {
-                    //if (clientPlayer == null)
-                      //  return;
-
                     writer.Write(clientPlayer.UserID);
                     writer.Write(clientPlayer.PlayerName);
                     writer.Write(clientPlayer.PlayerData);
@@ -63,9 +66,6 @@ namespace Game.Managers
                 {
                     using (DarkRiftWriter writer = new DarkRiftWriter())
                     {
-                        //if (clientPlayer == null)
-                          //  return;
-
                         writer.Write(clientPlayer.UserID);
                         writer.Write(clientPlayer.PlayerName);
                         writer.Write(clientPlayer.PlayerData);

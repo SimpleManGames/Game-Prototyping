@@ -1,5 +1,5 @@
 ﻿using Core.Managers;
-using Core.Network.Login;
+using Core.Network.Const;
 using Core.XmlDatabase;
 using DarkRift;
 using Game.Managers;
@@ -22,7 +22,7 @@ public class Player : Agent
     public Animator Animator { get; private set; }
     private GameObject modelObject;
 
-    #region -Movement Info
+    #region _Movement Info_
 
     [Header("Movement Info")]
     [ReadOnly, Tooltip("Describes the direction the player controller is trying to move. " +
@@ -35,9 +35,7 @@ public class Player : Agent
 
     #endregion
 
-    #region -Network Info
-
-
+    #region _Network Info_
 
     [SerializeField, ReadOnly]
     private int _networkID;
@@ -73,10 +71,17 @@ public class Player : Agent
 
     public bool IsClientPlayer { get { return name == "Player"; } }
 
+    [SerializeField, ReadOnly]
+    private Vector3 _networkPosition;
+    [SerializeField, ReadOnly]
+    private Quaternion _networkRotation;
+
     #endregion
 
     public delegate void CharacterReadyEventHandler();
     public static event CharacterReadyEventHandler OnCharacterReady;
+
+    #region _Update API_
 
     public override void Awake()
     {
@@ -104,15 +109,17 @@ public class Player : Agent
     public override void Start()
     {
         if (!IsClientPlayer)
+        {
+            DarkRiftAPI.onDataDetailed += RecieveData;
             return;
+        }
 
         if (DarkRiftAPI.isConnected)
         {
+            NetworkID = DarkRiftAPI.id;
             PlayerManager.OnPlayerLoadOK += MakePlayer;
             PlayerManager.LoadPlayer();
         }
-
-        NetworkID = DarkRiftAPI.id;
 
         base.Start();
         maxJumpVelocity = Mathf.Abs(Gravity) * timeToJumpApex;
@@ -126,6 +133,24 @@ public class Player : Agent
         if (!IsClientPlayer)
             return;
 
+        LocalUpdate();
+        NetworkUpdate();
+    }
+
+    private void OnApplicationQuit()
+    {
+        if (!IsClientPlayer)
+        {
+            DarkRiftAPI.onDataDetailed -= RecieveData;
+        }
+    }
+
+    #endregion
+
+    #region _Local Functions_
+
+    private void LocalUpdate()
+    {
         canMove = Animator.GetBool("canMove");
 
         HandleMovement();
@@ -178,7 +203,51 @@ public class Player : Agent
             Animator.SetFloat("vertical", moveAmount);
         }
     }
-    
+
+    #endregion
+
+    #region _Network Functions_
+
+    private void NetworkUpdate()
+    {
+        if (DarkRiftAPI.isConnected)
+        {
+            // Update the other clients about are new position/rotation
+
+            if (transform.position != _networkPosition)
+            {
+                DarkRiftAPI.SendMessageToOthers(NT.MoveT, NT.MoveS.Position, transform.position);
+                _networkPosition = transform.position;
+            }
+
+            if (transform.rotation != _networkRotation)
+            {
+                DarkRiftAPI.SendMessageToOthers(NT.MoveT, NT.MoveS.Rotation, transform.rotation);
+                _networkRotation = transform.rotation;
+            }
+        }
+    }
+
+    private void RecieveData(ushort sender, byte tag, ushort subject, object data)
+    {
+        // If Client A 'sender' passes info to Client B, only update on B if you are the same from A
+        if (sender == _networkID)
+        {
+            if (tag == NT.MoveT)
+            {
+                if (subject == NT.MoveS.Position)
+                {
+                    transform.position = Vector3.Lerp(transform.position, (Vector3)data, 0.25f);
+                }
+
+                if (subject == NT.MoveS.Rotation)
+                {
+                    transform.rotation = Quaternion.Lerp(transform.rotation, (Quaternion)data, 0.25f);
+                }
+            }
+        }
+    }
+
     //
     // Summary:
     //      Makes the client player
@@ -230,7 +299,9 @@ public class Player : Agent
                 });
     }
 
-    #region State Management
+    #endregion
+
+    #region _State Management_
 
     public bool MaintainingGround()
     {
