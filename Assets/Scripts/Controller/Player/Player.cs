@@ -89,7 +89,6 @@ public class Player : Agent
 
         if (!IsClientPlayer)
         {
-            Debug.Log("Not Player Client");
             if (controller) controller.enabled = false;
             if (Animator) Animator.enabled = false;
             if (input) input.enabled = false;

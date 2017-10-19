@@ -17,17 +17,15 @@ namespace Game.Managers
         public static event PlayerLoadOKEventHandler OnPlayerLoadOK;
 
         [ReadOnly] public Player clientPlayer;
-
-        public Transform modelToAdd;
-
+        
         private void Start()
         {
             clientPlayer = GameObject.Find("Player").GetComponent<Player>();
 
-            DarkRiftAPI.onDataDetailed += ReveiveData;
+            DarkRiftAPI.onDataDetailed += ReceiveData;
             DarkRiftAPI.onPlayerDisconnected += PlayerDisconnected;
 
-            LoadPlayerFromServer.OnCharacterReady += SendNewPlayer;            
+            LoadPlayerFromServer.OnCharacterReady += SendNewPlayer;       
         }
 
         private void SendNewPlayer()
@@ -38,8 +36,8 @@ namespace Game.Managers
 
                 using (DarkRiftWriter writer = new DarkRiftWriter())
                 {
-                    if (clientPlayer == null)
-                        return;
+                    //if (clientPlayer == null)
+                      //  return;
 
                     writer.Write(clientPlayer.UserID);
                     writer.Write(clientPlayer.PlayerName);
@@ -49,7 +47,7 @@ namespace Game.Managers
             }
         }
 
-        private void ReveiveData(ushort sender, byte tag, ushort subject, object data)
+        private void ReceiveData(ushort sender, byte tag, ushort subject, object data)
         {
             if(tag == NT.StartT)
             {
@@ -57,14 +55,15 @@ namespace Game.Managers
                 {
                     using (DarkRiftWriter writer = new DarkRiftWriter())
                     {
-                        if (clientPlayer == null)
-                            return;
+                        //if (clientPlayer == null)
+                          //  return;
 
                         writer.Write(clientPlayer.UserID);
                         writer.Write(clientPlayer.PlayerName);
                         writer.Write(clientPlayer.PlayerData);
 
                         DarkRiftAPI.SendMessageToID(sender, NT.StartT, NT.StartS.Spawn, writer);
+                        return;
                     }
                 }
 
@@ -75,10 +74,8 @@ namespace Game.Managers
                         int id = reader.ReadInt32();
                         string playerName = reader.ReadString();
                         string playerData = reader.ReadString();
-
-                        Debug.Log(id + " : " + playerName);
-
                         BuildOther(sender, id, playerName, playerData);
+                        return;
                     }
                 }
             }
@@ -86,13 +83,15 @@ namespace Game.Managers
 
         private void BuildOther(ushort sender, int id, string playerName, string data)
         {
-            GameObject otherPlayerObject = new GameObject("Player ID: " + id.ToString());
+            Debug.Log("Creating Other Player");
+            GameObject otherPlayerObject = new GameObject("Player ID: " + sender.ToString());
             Player otherPlayerComponent = otherPlayerObject.AddComponent<Player>();
             otherPlayerComponent.CreateThisPlayer(sender, id, playerName, data);
         }
 
         private void PlayerDisconnected(ushort id)
         {
+            Debug.Log("Disconnect: " + id.ToString());
             GameObject obj = GameObject.Find("Player ID: " + id.ToString());
             Destroy(obj, 0.1f);
         }
