@@ -21,7 +21,7 @@
 
 	<AssetInfo ID="ASSET_ICON_VIKING_SWORD">
 		<AssetBundleInfoRef>ASSET_BUNDLE_MAIN_CONTENT</AssetBundleInfoRef>
-		<Path>Assets/Art/Icons/Items/sword.png</Path>
+		<Path>Assets/Content/Icons/Items/sword.png</Path>
 	</AssetInfo>
 
 	<AssetInfo ID="ASSET_SHIELD">

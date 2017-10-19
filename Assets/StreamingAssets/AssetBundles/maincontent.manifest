@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 2337102167
+CRC: 3037551784
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 1fb71a6f669a91cc608ecb9214cea4a6
+    Hash: 3548b705f8d98b19acfa49b25884484d
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 07b1fc930e0570ab6f6198e5f44b900e
+    Hash: 4bfb529b333a2ba9495ec1fe386d7ef4
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -58,7 +58,7 @@ Assets:
 - Assets/Prefab/Controller/Player.prefab
 - Assets/Prefab/Parts/Arms/AES104.prefab
 - Assets/Prefab/Parts/Heads/HDM002.prefab
-- Assets/Art/Icons/Items/sword.png
+- Assets/Content/Icons/Items/sword.png
 - Assets/Prefab/Items/Armor/Shield.prefab
 - Assets/Prefab/Parts/Heads/HDS003.prefab
 Dependencies: []

@@ -1,6 +1,9 @@
-﻿using Core.Network.Const;
+﻿using Core.Managers;
+using Core.Network.Const;
 using Core.Network.Login;
+using Core.XmlDatabase;
 using DarkRift;
+using System.Linq;
 using UnityEngine;
 
 namespace Game.Managers
@@ -13,8 +16,9 @@ namespace Game.Managers
         public static event PlayerSavedOKEventHandler OnPlayerSavedOK;
         public static event PlayerLoadOKEventHandler OnPlayerLoadOK;
 
-        [ReadOnly]
-        public Player clientPlayer;
+        [ReadOnly] public Player clientPlayer;
+
+        public Transform modelToAdd;
 
         private void Start()
         {
