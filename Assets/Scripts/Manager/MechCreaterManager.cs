@@ -33,6 +33,11 @@ namespace Game.Managers
             PlayerManager.OnPlayerLoadOK += LoadPlayer;
         }
 
+        private void OnDestroy()
+        {
+            PlayerManager.OnPlayerLoadOK -= LoadPlayer;
+        }
+
         private void LoadPlayer(int id, string playerName, string data)
         {
             int count = 6;

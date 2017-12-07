@@ -1,5 +1,6 @@
 ﻿using Core.Managers;
 using Core.Network.Const;
+using Core.Network.Login;
 using Core.XmlDatabase;
 using DarkRift;
 using Game.Managers;
@@ -37,6 +38,7 @@ public class Player : Agent
 
     #region _Network Info_
 
+    [Header("Network Info")]
     [SerializeField, ReadOnly]
     private int _networkID;
     public int NetworkID
@@ -69,8 +71,6 @@ public class Player : Agent
         private set { _playerData = value; }
     }
 
-    public bool IsClientPlayer { get { return name == "Player"; } }
-
     [SerializeField, ReadOnly]
     private Vector3 _networkPosition;
     [SerializeField, ReadOnly]
@@ -79,7 +79,7 @@ public class Player : Agent
     #endregion
 
     public delegate void CharacterReadyEventHandler();
-    public static event CharacterReadyEventHandler OnCharacterReady;
+    public static event CharacterReadyEventHandler OnPlayerReady;
 
     #region _Update API_
 
@@ -88,8 +88,6 @@ public class Player : Agent
         if (GameManager.Instance.PlayerManager == null)
             GameManager.Instance.PlayerManager = FindObjectOfType<PlayerManager>();
 
-        //GameManager.Instance.PlayerManager.clientPlayer = this;
-
         base.Awake();
         controller = GetComponent<Controller>();
         Animator = GetComponentInChildren<Animator>();
@@ -97,52 +95,37 @@ public class Player : Agent
         state.CurrentState = new PlayerIdleState(state, this, controller);
 
         modelObject = transform.Find("Model")?.gameObject;
-
-        if (!IsClientPlayer)
-        {
-            if (controller) controller.enabled = false;
-            if (Animator) Animator.enabled = false;
-            if (input) input.enabled = false;
-        }
     }
 
     public override void Start()
     {
-        if (!IsClientPlayer)
-        {
-            DarkRiftAPI.onDataDetailed += RecieveData;
-            return;
-        }
-
-        if (DarkRiftAPI.isConnected)
-        {
-            NetworkID = DarkRiftAPI.id;
-            PlayerManager.OnPlayerLoadOK += MakePlayer;
-            PlayerManager.LoadPlayer();
-        }
-
         base.Start();
         maxJumpVelocity = Mathf.Abs(Gravity) * timeToJumpApex;
         minJumpVelocity = Mathf.Sqrt(2 * Mathf.Abs(Gravity) * minJumpHeight);
 
         cameraController = cameraRigTransform.GetComponent<CameraController>();
+
+        PlayerManager.OnPlayerLoadOK -= MakePlayer;
+        PlayerManager.OnPlayerLoadOK += MakePlayer;
+        PlayerManager.LoadPlayer();
+
+        NetworkID = DarkRiftAPI.id;
     }
 
     public void Update()
     {
-        if (!IsClientPlayer)
-            return;
-
         LocalUpdate();
+    }
+
+    private void FixedUpdate()
+    {
         NetworkUpdate();
     }
 
     private void OnApplicationQuit()
     {
-        if (!IsClientPlayer)
-        {
-            DarkRiftAPI.onDataDetailed -= RecieveData;
-        }
+        PlayerManager.OnPlayerLoadOK -= MakePlayer;
+        DarkRiftAPI.Disconnect();
     }
 
     #endregion
@@ -204,77 +187,27 @@ public class Player : Agent
         }
     }
 
-    #endregion
-
-    #region _Network Functions_
-
-    private void NetworkUpdate()
-    {
-        if (DarkRiftAPI.isConnected)
-        {
-            // Update the other clients about are new position/rotation
-
-            if (transform.position != _networkPosition)
-                DarkRiftAPI.SendMessageToOthers(NT.MoveT, NT.MoveS.Position, transform.position);
-
-            if (transform.rotation != _networkRotation)
-                DarkRiftAPI.SendMessageToOthers(NT.MoveT, NT.MoveS.Rotation, transform.rotation);
-
-            _networkPosition = transform.position;
-            _networkRotation = transform.rotation;
-        }
-    }
-
-    private void RecieveData(ushort sender, byte tag, ushort subject, object data)
-    {
-        // If Client A 'sender' passes info to Client B, only update on B if you are the same from A
-        if (sender == _networkID)
-        {
-            if (tag == NT.MoveT)
-            {
-                if (subject == NT.MoveS.Position)
-                {
-                    transform.position = (Vector3)data;
-                }
-
-                if (subject == NT.MoveS.Rotation)
-                {
-                    transform.rotation = (Quaternion)data;
-                }
-            }
-        }
-    }
-
     //
     // Summary:
     //      Makes the client player
     //
     private void MakePlayer(int id, string playerName, string data)
     {
-        CreateThisPlayer(id, playerName, data);
-        OnCharacterReady?.Invoke();
-    }
-
-    //
-    // Summary:
-    //      Creates the player for this reference of Player
-    //
-    public void CreateThisPlayer(int sender, int userID, string playerName, string data)
-    {
-        NetworkID = sender;
-        CreateThisPlayer(userID, playerName, data);
-    }
-
-    //
-    // Summary:
-    //      Creates the player for this reference of Player
-    //
-    public void CreateThisPlayer(int userID, string playerName, string data)
-    {
-        UserID = userID;
+        UserID = id;
         PlayerName = playerName;
         PlayerData = data;
 
+        CreatePlayer(data);
+
+        OnPlayerReady?.Invoke();
+    }
+
+    //
+    // Summary:
+    //      Creates the player for this reference of Player
+    //
+    private void CreatePlayer(string data)
+    {
         int count = 6;
         int k = 0;
 
@@ -294,6 +227,28 @@ public class Player : Agent
 
                     Instantiate(prefab, child);
                 });
+    }
+
+    #endregion
+
+    #region _Network Function
+
+    private void NetworkUpdate()
+    {
+        if (DarkRiftAPI.isConnected)
+        {
+            if (transform.position != _networkPosition)
+            {
+                DarkRiftAPI.SendMessageToOthers(NT.MoveT, NT.MoveS.Position, transform.position);
+                _networkPosition = transform.position;
+            }
+
+            if (transform.rotation != _networkRotation)
+            {
+                DarkRiftAPI.SendMessageToOthers(NT.MoveT, NT.MoveS.Rotation, transform.rotation);
+                _networkRotation = transform.rotation;
+            }
+        }
     }
 
     #endregion

@@ -926,6 +926,11 @@ Prefab:
       propertyPath: m_RootOrder
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 114560384761935740, guid: aa3c360fb1c6c8445880fd2a15be3ce9,
+        type: 2}
+      propertyPath: fixedTimeStep
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: aa3c360fb1c6c8445880fd2a15be3ce9, type: 2}
   m_IsPrefabParent: 0
@@ -1217,6 +1222,7 @@ GameObject:
   m_Component:
   - component: {fileID: 693937641}
   - component: {fileID: 693937640}
+  - component: {fileID: 693937642}
   - component: {fileID: 693937639}
   m_Layer: 0
   m_Name: Network
@@ -1247,7 +1253,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 105c3d9d1eb70c445b23133a09ace2c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  clientPlayer: {fileID: 0}
 --- !u!4 &693937641
 Transform:
   m_ObjectHideFlags: 0
@@ -1261,6 +1266,17 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &693937642
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 693937638}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d777e91af9c213a4fa1b1bd8f94f0aa7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &705065774 stripped
 Transform:
   m_PrefabParentObject: {fileID: 4011853450103932, guid: b218f3f610f24d146bce63cabcc467d2,

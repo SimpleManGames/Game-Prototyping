@@ -62,7 +62,6 @@ namespace Core.Managers
             _camera = FindObjectOfType<Camera>();
             _resourceManager = GetComponent<ResourceManager>();
             _stateMachine = _stateMachine ?? new StateMachine();
-            //_playerManager = FindObjectOfType<PlayerManager>(); //GetComponent<PlayerManager>();
 
             Database.Instance.ReadFiles(Application.streamingAssetsPath + "/XML/");
             ResourceManager.LoadBundlesAsync(() => OnFinishedLoading?.Invoke());
