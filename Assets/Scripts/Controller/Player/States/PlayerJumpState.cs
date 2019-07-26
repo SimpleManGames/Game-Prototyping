@@ -47,6 +47,7 @@ public class PlayerJumpState : IState
         verticalMoveDirection += controller.Up * player.Gravity * controller.DeltaTime;
 
         player.moveDirection = planarMoveDirection + verticalMoveDirection;
+        player.transform.position += player.moveDirection * controller.DeltaTime;
     }
 
     public void Exit()
@@ -56,5 +57,10 @@ public class PlayerJumpState : IState
 
         controller.EnableSlopeLimit();
         controller.EnableClamping();
+    }
+
+    public bool StateConditional()
+    {
+        return (player.input.Current.JumpInput);
     }
 }

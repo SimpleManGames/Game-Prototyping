@@ -28,26 +28,39 @@ public class PlayerMoveState : IState
 
     public void Update()
     {
-        if (player.HandleJumpState())
-            return;
+        Vector3 dirInputNor = player.input.Current.MoveInput.normalized;
+        player.moveDirection = Vector3.MoveTowards(player.moveDirection, player.LocalMovement() * player.moveSpeed, 30.0f * controller.DeltaTime);
 
-        if (player.HandleFallState())
-            return;
+        float m = Mathf.Abs(player.input.Current.MoveInput.x) + Mathf.Abs(player.input.Current.MoveInput.z);
+        player.MoveAmount = Mathf.Clamp01(m);
+        Vector3 moveDirectionNoYChange = Vector3.zero;
 
-        if (!player.HandleIdleState())
+        if (player.canMove)
         {
-            Vector3 dirInputNor = player.input.Current.MoveInput.normalized;
-            player.moveDirection = Vector3.MoveTowards(player.moveDirection, player.LocalMovement() * player.moveSpeed, 30.0f * controller.DeltaTime);
+            moveDirectionNoYChange += player.moveDirection;
+            moveDirectionNoYChange *= player.MoveAmount;
+            moveDirectionNoYChange.y = player.moveDirection.y;
         }
-        else
-            return;
-                
-        if (player.HandleRunState())
-            return;
+
+        if (player?.ModelObject?.transform.localPosition != Vector3.zero)
+        {
+            moveDirectionNoYChange += player.ModelObject.transform.localPosition;
+            player.ModelObject.transform.localPosition = Vector3.zero;
+        }
+
+        player.moveDirection += moveDirectionNoYChange * controller.DeltaTime;
+        player.transform.position += player.moveDirection * controller.DeltaTime;
+
+        State.Update();
     }
 
     public void Exit()
     {
+        //player.MoveAmount = 0f;
+    }
 
+    public bool StateConditional()
+    {
+        return (player.input.Current.MoveInput != Vector3.zero) && (!player.input.Current.RunInput);
     }
 }

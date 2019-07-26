@@ -13,7 +13,8 @@ public class Player : Agent
 
     Controller controller;
     public Animator Animator { get; private set; }
-    private GameObject modelObject;
+    private GameObject _modelObject;
+    public GameObject ModelObject { get { return _modelObject; } }
 
     #region Movement Info
 
@@ -22,12 +23,12 @@ public class Player : Agent
         "If you want to manually move this, use the Controller's debug move")]
     public Vector3 moveDirection;
     [SerializeField, ReadOnly]
-    private float moveAmount;
-    public float MoveAmount { get; set; }
+    private float _moveAmount;
+    public float MoveAmount { get { return _moveAmount; } set { _moveAmount = value; } }
     [ReadOnly] public bool canMove;
 
     #endregion
-    
+
     public override void Awake()
     {
         base.Awake();
@@ -36,7 +37,7 @@ public class Player : Agent
         input = GetComponent<PlayerInputController>();
         state.CurrentState = new PlayerIdleState(state, this, controller);
 
-        modelObject = transform.Find("boxMan").gameObject;
+        _modelObject = transform.Find("boxMan").gameObject;
     }
 
     public override void Start()
@@ -44,40 +45,23 @@ public class Player : Agent
         base.Start();
         maxJumpVelocity = Mathf.Abs(Gravity) * timeToJumpApex;
         minJumpVelocity = Mathf.Sqrt(2 * Mathf.Abs(Gravity) * minJumpHeight);
+
+        state.AddState(new PlayerIdleState(state, this, controller));
+        state.AddState(new PlayerMoveState(state, this, controller));
+        state.AddState(new PlayerRunState(state, this, controller));
+        state.AddState(new PlayerFallState(state, this, controller));
+        state.AddState(new PlayerJumpState(state, this, controller));
+        state.AddState(new PlayerRollState(state, this, controller));
     }
 
     public void Update()
     {
         canMove = Animator.GetBool("canMove");
 
-        HandleMovement();
-
         if (canMove)
             RotateTransform();
 
         UpdateAnimationValues();
-    }
-
-    private void HandleMovement()
-    {
-        float m = Mathf.Abs(input.Current.MoveInput.x) + Mathf.Abs(input.Current.MoveInput.z);
-        moveAmount = Mathf.Clamp01(m);
-        Vector3 moveDirectionNoYChange = Vector3.zero;
-
-        if (canMove)
-        {
-            moveDirectionNoYChange += moveDirection;
-            moveDirectionNoYChange *= moveAmount;
-            moveDirectionNoYChange.y = moveDirection.y;
-        }
-
-        if (modelObject.transform.localPosition != Vector3.zero)
-        {
-            moveDirectionNoYChange += modelObject.transform.localPosition;
-            modelObject.transform.localPosition = Vector3.zero;
-        }
-
-        transform.position += moveDirectionNoYChange * controller.DeltaTime;
     }
 
     private void RotateTransform()
@@ -96,9 +80,9 @@ public class Player : Agent
     private void UpdateAnimationValues()
     {
         if (canMove)
-            Animator.SetFloat("vertical", moveAmount);
+            Animator.SetFloat("vertical", _moveAmount);
     }
-    
+
     #region State Management
 
     public bool MaintainingGround()
@@ -131,66 +115,6 @@ public class Player : Agent
         }
 
         return local.normalized;
-    }
-
-    public bool HandleJumpState()
-    {
-        if (input.Current.JumpInput)
-        {
-            state.CurrentState = new PlayerJumpState(state, this, controller);
-            return true;
-        }
-
-        return false;
-    }
-
-    public bool HandleFallState()
-    {
-        if (!MaintainingGround())
-        {
-            state.CurrentState = new PlayerFallState(state, this, controller);
-            return true;
-        }
-
-        return false;
-    }
-
-    public bool HandleMoveState()
-    {
-        if (input.Current.MoveInput != Vector3.zero)
-        {
-            if (input.Current.RunInput)
-            {
-                state.CurrentState = new PlayerRunState(state, this, controller);
-                return true;
-            }
-
-            state.CurrentState = new PlayerMoveState(state, this, controller);
-            return true;
-        }
-
-        return false;
-    }
-
-    public bool HandleRunState()
-    {
-        if (input.Current.RunInput)
-        {
-            state.CurrentState = new PlayerRunState(state, this, controller);
-            return true;
-        }
-
-        return false;
-    }
-
-    public bool HandleIdleState()
-    {
-        if (input.Current.MoveInput == Vector3.zero)
-        {
-            state.CurrentState = new PlayerIdleState(state, this, controller);
-            return true;
-        }
-        return false;
     }
 
     #endregion

@@ -6,6 +6,8 @@
 /// </summary>
 public interface IState
 {
+    bool StateConditional();
+
     /// <summary>
     /// Excutes when this is set to a StateMachine's CurrentState
     /// </summary>

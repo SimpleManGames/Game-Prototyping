@@ -27,24 +27,20 @@ public class PlayerRunState : IState
 
     public void Update()
     {
-        if (player.HandleJumpState())
-            return;
-
-        if (player.HandleFallState())
-            return;
-
-        if (player.HandleIdleState())
-            return;
-
         Vector3 dirInputNor = player.input.Current.MoveInput.normalized;
         player.moveDirection = Vector3.MoveTowards(player.moveDirection, player.LocalMovement() * player.runSpeed, 30.0f * controller.DeltaTime);
+        player.transform.position += player.moveDirection * controller.DeltaTime;
 
-        if (player.HandleMoveState())
-            return;
+        State.Update();
     }
 
     public void Exit()
     {
         player.Animator.SetBool("run", false);
+    }
+
+    public bool StateConditional()
+    {
+        return (player.input.Current.MoveInput != Vector3.zero) && (player.input.Current.RunInput);
     }
 }

@@ -15,4 +15,9 @@ public class MenuState : IState
     public void Exit()
     {
     }
+
+    public bool StateConditional()
+    {
+        throw new NotImplementedException();
+    }
 }

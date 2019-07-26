@@ -31,6 +31,9 @@
         }
 
         player.moveDirection += controller.Up * player.Gravity * controller.DeltaTime;
+        player.transform.position += player.moveDirection * controller.DeltaTime;
+
+        State.Update();
     }
 
     public void Exit()
@@ -39,5 +42,10 @@
 
         controller.EnableSlopeLimit();
         controller.EnableClamping();
+    }
+
+    public bool StateConditional()
+    {
+        return (!player.MaintainingGround());
     }
 }

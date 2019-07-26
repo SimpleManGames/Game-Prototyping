@@ -62,7 +62,7 @@ public class Controller : SphereCastController
     private Vector3 lastGroundPosition;
 
     private float hRadius;
-    
+
     private int TemporaryLayerIndex;
     private float fixedDeltaTime;
 
@@ -97,7 +97,7 @@ public class Controller : SphereCastController
     public float DeltaTime { get; private set; }
 
     #endregion
-    
+
     #region Unity API
 
     private void Awake()
@@ -150,6 +150,7 @@ public class Controller : SphereCastController
             DeltaTime = Time.deltaTime;
 
             SingleUpdate();
+            return;
         }
         else
         {
@@ -197,7 +198,7 @@ public class Controller : SphereCastController
         agent?.state?.CurrentState?.Update();
 
         CollisionData.Clear();
-        
+
         // Calculate the distance the character is trying to move
         Vector3 vDistance = transform.position - initialPosition;
         float distance = vDistance.magnitude;
@@ -215,7 +216,7 @@ public class Controller : SphereCastController
             Vector3 testPosition = initialPosition + (vDistance.normalized * testDistance);
 
             transform.position = testPosition;
-            
+
             if (RecursivePushback(0, MaxPushbackIterations))
             {
                 if (debugCollisionSteps)
@@ -395,7 +396,10 @@ public class Controller : SphereCastController
     }
 
     private void ClampToGround()
-        => transform.position -= Up * CurrentGround.Distance();
+    {
+        float d = CurrentGround.Distance();
+        transform.position -= Up * d;
+    }
 
     #region Enable/Disable Functions
 
@@ -420,7 +424,7 @@ public class Controller : SphereCastController
         else
             return transform.position + sphere.offset * Up * HeightScale;
     }
-    
+
     #region Ignore Collider Functions
 
     public void IgnoreCollider(Collider col)
@@ -511,7 +515,7 @@ public class Controller : SphereCastController
             float smallerRadius = controller.radius - (Tolerance * Tolerance);
 
             RaycastHit hit;
-            
+
             if (Physics.SphereCast(o, smallerRadius, down, out hit, Mathf.Infinity, walkable, triggerInteraction))
             {
                 var colType = hit.collider.gameObject.GetComponent<CollisionType>();
@@ -735,7 +739,7 @@ public class Controller : SphereCastController
             {
                 groundNormal = farGround.Normal;
             }
-            else  
+            else
             {
                 groundNormal = primaryGround.Normal;
             }

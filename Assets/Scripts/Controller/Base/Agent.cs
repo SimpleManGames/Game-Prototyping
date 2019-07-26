@@ -36,7 +36,6 @@ public class Agent : MonoBehaviour, IGravity
     public virtual void Start()
     {
         _gravity = -(maxJumpHeight) / Mathf.Pow(timeToJumpApex, 2);
-        //_gravity = -9.81f;
     }
 
     public float CalculateJumpSpeed(float jumpHeight, float gravity)

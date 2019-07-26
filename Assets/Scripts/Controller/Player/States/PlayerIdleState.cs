@@ -26,17 +26,15 @@ public sealed class PlayerIdleState : IState
 
     public void Update()
     {
-        if (player.HandleJumpState())
-            return;
-
-        if (player.HandleFallState())
-            return;
-
-        if (player.HandleMoveState())
-            return;
-
         player.moveDirection = Vector3.MoveTowards(player.moveDirection, Vector3.zero, 25f * controller.DeltaTime);
+
+        State.Update();
     }
 
     public void Exit() { }
+
+    public bool StateConditional()
+    {
+        return (player.input.Current.MoveInput == Vector3.zero);
+    }
 }

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 /// <summary>
@@ -47,6 +49,8 @@ public class StateMachine
         }
     }
 
+    public List<IState> states = new List<IState>();
+
     public StateMachine()
     {
 
@@ -54,6 +58,17 @@ public class StateMachine
     public StateMachine(IState startState)
     {
         CurrentState = startState;
+    }
+
+    public void AddState(IState state)
+    {
+        states.Add(state);
+    }
+    public void Update()
+    {
+        foreach (IState state in states)
+            if (state.StateConditional())
+                CurrentState = state;
     }
 
     // Cleans up the CurrentState
