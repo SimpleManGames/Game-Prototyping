@@ -4,8 +4,6 @@ using UnityEngine;
 [SelectionBase, RequireComponent(typeof(Controller))]
 public class Enemy : Agent, ITargetable
 {
-    Controller controller;
-    
     [SerializeField]
     private float targetOffset;
     public float TargetOffset

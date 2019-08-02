@@ -22,17 +22,11 @@ public class SphereCastController : MonoBehaviour
 
     protected CollisionSphere Feet
     {
-        get
-        {
-            return spheres.Where(s => s.isFeet == true).FirstOrDefault();
-        }
+        get { return spheres.Where(s => s.isFeet == true).FirstOrDefault(); }
     }
     protected CollisionSphere Head
     {
-        get
-        {
-            return spheres.Where(s => s.isHead == true).FirstOrDefault();
-        }
+        get { return spheres.Where(s => s.isHead == true).FirstOrDefault(); }
     }
 
     protected Vector3 OffsetPosition(float offset)

@@ -15,7 +15,6 @@
 
     public void Start()
     {
-        //player.Animator.SetBool("canMove", true);
         player.Animator.SetFloat("vertical", player.MoveAmount);
         player.Animator.SetBool("rolling", true);
     }

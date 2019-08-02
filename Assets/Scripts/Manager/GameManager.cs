@@ -49,11 +49,11 @@ namespace Core.Managers
             _resourceManager = GetComponent<ResourceManager>();
             _stateMachine = _stateMachine ?? new StateMachine();
 
-            OnFinishedLoading += () => Debug.Log("Finished");
+            OnFinishedLoading += () => Debug.Log("Game Manager Finished");
 
-            Debug.Log(Application.streamingAssetsPath);
-            Database.Instance.ReadFiles(Application.streamingAssetsPath + "/XML/");
-            ResourceManager.LoadBundlesAsync(() => OnFinishedLoading?.Invoke());
+            //Debug.Log(Application.streamingAssetsPath);
+            //Database.Instance.ReadFiles(Application.streamingAssetsPath + "/XML/");
+            //ResourceManager.LoadBundlesAsync(() => OnFinishedLoading?.Invoke());
 
             SceneManager.sceneLoaded += LevelChange;
         }

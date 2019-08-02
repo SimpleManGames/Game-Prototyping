@@ -29,7 +29,6 @@ public class PlayerRunState : IState
     {
         Vector3 dirInputNor = player.input.Current.MoveInput.normalized;
         player.moveDirection = Vector3.MoveTowards(player.moveDirection, player.LocalMovement() * player.runSpeed, 30.0f * controller.DeltaTime);
-        player.transform.position += player.moveDirection * controller.DeltaTime;
 
         State.Update();
     }

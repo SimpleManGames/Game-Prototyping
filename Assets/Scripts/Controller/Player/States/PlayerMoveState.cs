@@ -10,9 +10,6 @@ public class PlayerMoveState : IState
     Player player;
     Controller controller;
 
-    float currentSpeed;
-    float speedSmoothVelocity;
-
     public PlayerMoveState(StateMachine state, Player player, Controller controller)
     {
         State = state;
@@ -49,14 +46,13 @@ public class PlayerMoveState : IState
         }
 
         player.moveDirection += moveDirectionNoYChange * controller.DeltaTime;
-        player.transform.position += player.moveDirection * controller.DeltaTime;
 
         State.Update();
     }
 
     public void Exit()
     {
-        //player.MoveAmount = 0f;
+
     }
 
     public bool StateConditional()

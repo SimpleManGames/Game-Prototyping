@@ -26,7 +26,6 @@ public class Controller : SphereCastController
     [Header("Debug Variables")]
     #region Debug Variables
 
-
     [SerializeField]
     private Vector3 debugMove;
 
@@ -175,19 +174,17 @@ public class Controller : SphereCastController
 
     public void ManualUpdate(float deltaTime)
     {
-        this.DeltaTime = deltaTime;
+        DeltaTime = deltaTime;
         SingleUpdate();
     }
 
     private void SingleUpdate()
     {
         bool isClamping = clamping || CurrentlyClampTo != null;
-        Transform clampedTo = CurrentlyClampTo != null ? CurrentlyClampTo : CurrentGround.transform;
+        Transform clampedTo = CurrentlyClampTo ?? CurrentGround.Transform;
 
         if (clampToMovingGround && isClamping && clampedTo != null && clampedTo.position - lastGroundPosition != Vector3.zero)
-        {
             transform.position += clampedTo.position - lastGroundPosition;
-        }
 
         initialPosition = transform.position;
 
@@ -195,10 +192,38 @@ public class Controller : SphereCastController
 
         transform.position += debugMove * DeltaTime;
 
+        agent.EarlyAgentUpdate();
         agent?.state?.CurrentState?.Update();
+        agent.LateAgentUpdate();
 
         CollisionData.Clear();
+        //RecursivePushbackSteps();
+        RecursivePushback(0, MaxPushbackIterations);
 
+        ProbeGround(2);
+
+        if (slopeLimiting)
+            SlopeLimit();
+
+        ProbeGround(3);
+
+        if (clamping)
+            ClampToGround();
+
+        isClamping = clamping || CurrentlyClampTo != null;
+        clampedTo = CurrentlyClampTo ?? CurrentGround.Transform;
+
+        if (isClamping)
+            lastGroundPosition = clampedTo.position;
+
+        if (debugGrounding)
+            CurrentGround.DebugGround(true, true, true, true, true);
+
+        AfterSingleUpdate?.Invoke();
+    }
+
+    private void RecursivePushbackSteps()
+    {
         // Calculate the distance the character is trying to move
         Vector3 vDistance = transform.position - initialPosition;
         float distance = vDistance.magnitude;
@@ -225,27 +250,6 @@ public class Controller : SphereCastController
                 break;
             }
         }
-
-        ProbeGround(2);
-
-        if (slopeLimiting)
-            SlopeLimit();
-
-        ProbeGround(3);
-
-        if (clamping)
-            ClampToGround();
-
-        isClamping = clamping || CurrentlyClampTo != null;
-        clampedTo = CurrentlyClampTo != null ? CurrentlyClampTo : CurrentGround.transform;
-
-        if (isClamping)
-            lastGroundPosition = clampedTo.position;
-
-        if (debugGrounding)
-            CurrentGround.DebugGround(true, true, true, true, true);
-
-        AfterSingleUpdate?.Invoke();
     }
 
     #endregion
@@ -262,7 +266,7 @@ public class Controller : SphereCastController
         Vector3 n = CurrentGround.PrimaryNormal();
         float a = Vector3.Angle(n, Up);
 
-        if (a > CurrentGround.collisionType.slopeLimit)
+        if (a > CurrentGround.CollisionType.slopeLimit)
         {
             Vector3 absoluteMoveDirection = Math3D.ProjectVectorOnPlane(n, transform.position - initialPosition);
 
@@ -277,9 +281,7 @@ public class Controller : SphereCastController
             Vector3 resolvedPosition = Math3D.ProjectPointOnLine(initialPosition, r, transform.position);
             Vector3 direction = Math3D.ProjectVectorOnPlane(n, resolvedPosition - transform.position);
 
-            RaycastHit hit;
-
-            if (Physics.CapsuleCast(SpherePosition(Feet), SpherePosition(Head), radius, direction.normalized, out hit, direction.magnitude, walkable, triggerInteraction))
+            if (Physics.CapsuleCast(SpherePosition(Feet), SpherePosition(Head), radius, direction.normalized, out RaycastHit hit, direction.magnitude, walkable, triggerInteraction))
             {
                 transform.position += v.normalized * hit.distance;
             }
@@ -296,88 +298,85 @@ public class Controller : SphereCastController
 
     bool RecursivePushback(int depth, int maxDepth)
     {
-        bool hasCollided = false;
-
         PushIgnoredColliders();
+        bool hasCollided = false;
+        bool contact = false;
 
         CollisionData.Clear();
-
-        bool contact = false;
 
         foreach (var sphere in spheres)
         {
             foreach (Collider col in Physics.OverlapSphere((SpherePosition(sphere)), radius, walkable, triggerInteraction))
             {
                 Vector3 position = SpherePosition(sphere);
-                Vector3 contactPoint;
-                bool contactPointSuccess = ColliderMethods.ClosestPointOnSurface(col, position, radius, out contactPoint);
+                bool contactPointSuccess = ColliderMethods.ClosestPointOnSurface(col, position, radius, out Vector3 contactPoint);
 
-                if (contactPointSuccess)
+                if (!contactPointSuccess)
                 {
-                    if (debugPushbackMessages)
-                        DebugDraw.DrawMarker(contactPoint, 1.0f, Color.cyan, 0.0f, false);
+                    return false;
+                }
 
-                    Vector3 v = contactPoint - position;
-                    if (v != Vector3.zero)
+                if (debugPushbackMessages)
+                    DebugDraw.DrawMarker(contactPoint, 1.0f, Color.cyan, 0.0f, false);
+
+                Vector3 v = contactPoint - position;
+                if (v != Vector3.zero)
+                {
+                    // Cache the collider's layer so that we can cast against it
+                    int layer = col.gameObject.layer;
+
+                    col.gameObject.layer = TemporaryLayerIndex;
+
+                    // Check which side of the normal we are on
+                    bool facingNormal = Physics.SphereCast(new Ray(position, v.normalized), TinyTolerance, v.magnitude + TinyTolerance, 1 << TemporaryLayerIndex);
+
+                    col.gameObject.layer = layer;
+
+                    // Orient and scale our vector based on which side of the normal we are situated
+                    if (facingNormal)
                     {
-                        // Cache the collider's layer so that we can cast against it
-                        int layer = col.gameObject.layer;
-
-                        col.gameObject.layer = TemporaryLayerIndex;
-
-                        // Check which side of the normal we are on
-                        bool facingNormal = Physics.SphereCast(new Ray(position, v.normalized), TinyTolerance, v.magnitude + TinyTolerance, 1 << TemporaryLayerIndex);
-
-                        col.gameObject.layer = layer;
-
-                        // Orient and scale our vector based on which side of the normal we are situated
-                        if (facingNormal)
+                        if (Vector3.Distance(position, contactPoint) < radius)
                         {
-                            if (Vector3.Distance(position, contactPoint) < radius)
-                            {
-                                v = v.normalized * (radius - v.magnitude) * -1;
-                            }
-                            else
-                            {
-                                // A previously resolved collision has had a side effect that moved us outside this collider
-                                continue;
-                            }
+                            v = v.normalized * (radius - v.magnitude) * -1;
                         }
                         else
                         {
-                            v = v.normalized * (radius + v.magnitude);
+                            // A previously resolved collision has had a side effect that moved us outside this collider
+                            continue;
                         }
-
-                        contact = true;
-
-                        transform.position += v;
-
-                        col.gameObject.layer = TemporaryLayerIndex;
-
-                        // Retrieve the surface normal of the collided point
-                        RaycastHit normalHit;
-
-                        Physics.SphereCast(new Ray(position + v, contactPoint - (position + v)), TinyTolerance, out normalHit, 1 << TemporaryLayerIndex);
-
-                        col.gameObject.layer = layer;
-
-                        CollisionType superColType = col.gameObject.GetComponent<CollisionType>();
-
-                        if (superColType == null)
-                            superColType = defaultCollisionType;
-
-                        // Our collision affected the collider; add it to the collision data
-                        var collision = new CollisionData()
-                        {
-                            collisionSphere = sphere,
-                            collisionType = superColType,
-                            gameObject = col.gameObject,
-                            point = contactPoint,
-                            normal = normalHit.normal
-                        };
-
-                        CollisionData.Add(collision);
                     }
+                    else
+                    {
+                        v = v.normalized * (radius + v.magnitude);
+                    }
+
+                    contact = true;
+
+                    transform.position += v;
+
+                    col.gameObject.layer = TemporaryLayerIndex;
+
+                    // Retrieve the surface normal of the collided point
+                    Physics.SphereCast(new Ray(position + v, contactPoint - (position + v)), TinyTolerance, out RaycastHit normalHit, 1 << TemporaryLayerIndex);
+
+                    col.gameObject.layer = layer;
+
+                    CollisionType superColType = col.gameObject.GetComponent<CollisionType>();
+
+                    if (superColType == null)
+                        superColType = defaultCollisionType;
+
+                    // Our collision affected the collider; add it to the collision data
+                    var collision = new CollisionData()
+                    {
+                        collisionSphere = sphere,
+                        collisionType = superColType,
+                        gameObject = col.gameObject,
+                        point = contactPoint,
+                        normal = normalHit.normal
+                    };
+
+                    CollisionData.Add(collision);
                 }
 
                 if (contact)
@@ -403,17 +402,10 @@ public class Controller : SphereCastController
 
     #region Enable/Disable Functions
 
-    public void EnableClamping()
-        => clamping = true;
-
-    public void DisableClamping()
-        => clamping = false;
-
-    public void EnableSlopeLimit()
-        => slopeLimiting = true;
-
-    public void DisableSlopeLimit()
-        => slopeLimiting = false;
+    public void EnableClamping() => clamping = true;
+    public void DisableClamping() => clamping = false;
+    public void EnableSlopeLimit() => slopeLimiting = true;
+    public void DisableSlopeLimit() => slopeLimiting = false;
 
     #endregion
 
@@ -427,15 +419,8 @@ public class Controller : SphereCastController
 
     #region Ignore Collider Functions
 
-    public void IgnoreCollider(Collider col)
-    {
-        ignoredColliders.Add(col);
-    }
-
-    public void RemoveIgnoredCollider(Collider col)
-    {
-        ignoredColliders.Remove(col);
-    }
+    public void IgnoreCollider(Collider col) => ignoredColliders.Add(col);
+    public void RemoveIgnoredCollider(Collider col) => ignoredColliders.Remove(col);
 
     private void PushIgnoredColliders()
     {
@@ -466,7 +451,7 @@ public class Controller : SphereCastController
     {
         private LayerMask walkable;
         private Controller controller;
-        private QueryTriggerInteraction triggerInteraction;
+        private readonly QueryTriggerInteraction triggerInteraction;
 
         public Ground(LayerMask walkable, Controller controller, QueryTriggerInteraction triggerInteraction)
         {
@@ -495,8 +480,8 @@ public class Controller : SphereCastController
         private GroundHit stepGround;
         private GroundHit flushGround;
 
-        public CollisionType collisionType { get; private set; }
-        public Transform transform { get; private set; }
+        public CollisionType CollisionType { get; private set; }
+        public Transform Transform { get; private set; }
 
         private const float groundingUpperBoundAngle = 60.0f;
         private const float groundingMaxPercentFromCenter = 0.85f;
@@ -514,9 +499,7 @@ public class Controller : SphereCastController
             // Reduce our radius by Tolerance squared to avoid failing the SphereCast due to clipping with walls
             float smallerRadius = controller.radius - (Tolerance * Tolerance);
 
-            RaycastHit hit;
-
-            if (Physics.SphereCast(o, smallerRadius, down, out hit, Mathf.Infinity, walkable, triggerInteraction))
+            if (Physics.SphereCast(o, smallerRadius, down, out RaycastHit hit, Mathf.Infinity, walkable, triggerInteraction))
             {
                 var colType = hit.collider.gameObject.GetComponent<CollisionType>();
 
@@ -525,8 +508,8 @@ public class Controller : SphereCastController
                     colType = defaultCollisionType;
                 }
 
-                collisionType = colType;
-                transform = hit.transform;
+                CollisionType = colType;
+                Transform = hit.transform;
 
                 // By reducing the initial SphereCast's radius by Tolerance, our casted sphere no longer fits with
                 // our controller's shape. Reconstruct the sphere cast with the proper radius
@@ -551,11 +534,8 @@ public class Controller : SphereCastController
                 Vector3 nearPoint = hit.point + toCenter + (up * TinyTolerance);
                 Vector3 farPoint = hit.point + (awayFromCenter * 3);
 
-                RaycastHit nearHit;
-                RaycastHit farHit;
-
-                Physics.Raycast(nearPoint, down, out nearHit, Mathf.Infinity, walkable, triggerInteraction);
-                Physics.Raycast(farPoint, down, out farHit, Mathf.Infinity, walkable, triggerInteraction);
+                Physics.Raycast(nearPoint, down, out RaycastHit nearHit, Mathf.Infinity, walkable, triggerInteraction);
+                Physics.Raycast(farPoint, down, out RaycastHit farHit, Mathf.Infinity, walkable, triggerInteraction);
 
                 nearGround = new GroundHit(nearHit.point, nearHit.normal, nearHit.distance);
                 farGround = new GroundHit(farHit.point, farHit.normal, farHit.distance);
@@ -570,13 +550,9 @@ public class Controller : SphereCastController
 
                     Vector3 flushOrigin = hit.point + hit.normal * TinyTolerance;
 
-                    RaycastHit flushHit;
-
-                    if (Physics.Raycast(flushOrigin, v, out flushHit, Mathf.Infinity, walkable, triggerInteraction))
+                    if (Physics.Raycast(flushOrigin, v, out RaycastHit flushHit, Mathf.Infinity, walkable, triggerInteraction))
                     {
-                        RaycastHit sphereCastHit;
-
-                        if (SimulateSphereCast(flushHit.normal, out sphereCastHit))
+                        if (SimulateSphereCast(flushHit.normal, out RaycastHit sphereCastHit))
                         {
                             flushGround = new GroundHit(sphereCastHit.point, sphereCastHit.normal, sphereCastHit.distance);
                         }
@@ -612,9 +588,7 @@ public class Controller : SphereCastController
                         Vector3 r = Vector3.Cross(nearHit.normal, down);
                         Vector3 v = Vector3.Cross(r, nearHit.normal);
 
-                        RaycastHit stepHit;
-
-                        if (Physics.Raycast(nearPoint, v, out stepHit, Mathf.Infinity, walkable, triggerInteraction))
+                        if (Physics.Raycast(nearPoint, v, out RaycastHit stepHit, Mathf.Infinity, walkable, triggerInteraction))
                         {
                             stepGround = new GroundHit(stepHit.point, stepHit.normal, stepHit.distance);
                         }
@@ -636,12 +610,10 @@ public class Controller : SphereCastController
                     colType = defaultCollisionType;
                 }
 
-                collisionType = colType;
-                transform = hit.transform;
+                CollisionType = colType;
+                Transform = hit.transform;
 
-                RaycastHit sphereCastHit;
-
-                if (SimulateSphereCast(hit.normal, out sphereCastHit))
+                if (SimulateSphereCast(hit.normal, out RaycastHit sphereCastHit))
                 {
                     primaryGround = new GroundHit(sphereCastHit.point, sphereCastHit.normal, sphereCastHit.distance);
                 }
@@ -687,11 +659,7 @@ public class Controller : SphereCastController
             }
         }
 
-        public bool IsGrounded(bool currentlyGrounded, float distance)
-        {
-            Vector3 n;
-            return IsGrounded(currentlyGrounded, distance, out n);
-        }
+        public bool IsGrounded(bool currentlyGrounded, float distance) => IsGrounded(currentlyGrounded, distance, out Vector3 n);
 
         public bool IsGrounded(bool currentlyGrounded, float distance, out Vector3 groundNormal)
         {
@@ -703,9 +671,9 @@ public class Controller : SphereCastController
             }
 
             // Check if we are flush against a wall
-            if (farGround != null && Vector3.Angle(farGround.Normal, controller.Up) > collisionType.standAngle)
+            if (farGround != null && Vector3.Angle(farGround.Normal, controller.Up) > CollisionType.standAngle)
             {
-                if (flushGround != null && Vector3.Angle(flushGround.Normal, controller.Up) < collisionType.standAngle && flushGround.Distance < distance)
+                if (flushGround != null && Vector3.Angle(flushGround.Normal, controller.Up) < CollisionType.standAngle && flushGround.Distance < distance)
                 {
                     groundNormal = flushGround.Normal;
                     return true;
@@ -718,14 +686,14 @@ public class Controller : SphereCastController
             if (farGround != null && !OnSteadyGround(farGround.Normal, primaryGround.Point))
             {
                 // Check if we are walking onto steadier ground
-                if (nearGround != null && nearGround.Distance < distance && Vector3.Angle(nearGround.Normal, controller.Up) < collisionType.standAngle && !OnSteadyGround(nearGround.Normal, nearGround.Point))
+                if (nearGround != null && nearGround.Distance < distance && Vector3.Angle(nearGround.Normal, controller.Up) < CollisionType.standAngle && !OnSteadyGround(nearGround.Normal, nearGround.Point))
                 {
                     groundNormal = nearGround.Normal;
                     return true;
                 }
 
                 // Check if we are on a step or stair
-                if (stepGround != null && stepGround.Distance < distance && Vector3.Angle(stepGround.Normal, controller.Up) < collisionType.standAngle)
+                if (stepGround != null && stepGround.Distance < distance && Vector3.Angle(stepGround.Normal, controller.Up) < CollisionType.standAngle)
                 {
                     groundNormal = stepGround.Normal;
                     return true;

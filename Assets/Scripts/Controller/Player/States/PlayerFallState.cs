@@ -17,6 +17,8 @@
         controller.DisableClamping();
         controller.DisableSlopeLimit();
 
+        player.Animator.SetFloat("vertical", 0f);
+
         player.Animator.SetBool("onGround", false);
         player.Animator.SetFloat("fallFlip", -player.Animator.GetFloat("fallFlip"));
     }
@@ -31,7 +33,6 @@
         }
 
         player.moveDirection += controller.Up * player.Gravity * controller.DeltaTime;
-        player.transform.position += player.moveDirection * controller.DeltaTime;
 
         State.Update();
     }
